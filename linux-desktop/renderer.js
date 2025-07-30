@@ -15,10 +15,87 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Populate platform info
+  // Populate platform and version info
   const platformEl = document.getElementById('platform');
   if (platformEl) {
     platformEl.textContent = window.nyano.platform;
   }
+  const versionEl = document.getElementById('version');
+  if (versionEl) {
+    versionEl.textContent = window.nyano.version;
+  }
+
+  // Setup dark mode toggle
+  const darkToggle = document.getElementById('dark-toggle');
+  if (darkToggle) {
+    const current = localStorage.getItem('theme');
+    if (current === 'dark') {
+      document.body.classList.add('dark');
+      darkToggle.checked = true;
+    }
+    darkToggle.addEventListener('change', () => {
+      const dark = darkToggle.checked;
+      document.body.classList.toggle('dark', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
+  }
+
+  // Wallet placeholder data
+  const address = 'nyano_111111111111111111111111111111111111111111111111111111111111';
+  const balanceEl = document.getElementById('balance');
+  const addressEl = document.getElementById('address');
+  if (addressEl) {
+    addressEl.value = address;
+  }
+  if (balanceEl) {
+    balanceEl.textContent = '0';
+  }
+
+  const copyBtn = document.getElementById('copy-address');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(address).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = ''), 1000);
+      });
+    });
+  }
+
+  const sendBtn = document.getElementById('send-button');
+  if (sendBtn) {
+    sendBtn.addEventListener('click', () => {
+      const to = document.getElementById('send-to').value;
+      const amt = document.getElementById('send-amount').value;
+      const status = document.getElementById('tx-status');
+      status.textContent = `Pretending to send ${amt} NYANO to ${to}`;
+    });
+  }
+
+  // Miner controls
+  let mining = false;
+  const statusEl = document.getElementById('miner-status');
+  const startBtn = document.getElementById('start-miner');
+  const stopBtn = document.getElementById('stop-miner');
+
+  const updateMinerUI = () => {
+    if (statusEl) statusEl.textContent = mining ? 'running' : 'stopped';
+    if (startBtn) startBtn.disabled = mining;
+    if (stopBtn) stopBtn.disabled = !mining;
+  };
+
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      mining = true;
+      updateMinerUI();
+    });
+  }
+  if (stopBtn) {
+    stopBtn.addEventListener('click', () => {
+      mining = false;
+      updateMinerUI();
+    });
+  }
+
+  updateMinerUI();
 });
 

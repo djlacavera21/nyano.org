@@ -29,15 +29,39 @@
     <main id="content">
       <section id="wallet" class="page active">
         <h2>Wallet</h2>
-        <p>Wallet functionality coming soon...</p>
+        <div class="balance">Balance: <span id="balance">0</span> NYANO</div>
+
+        <div class="wallet-address">
+          <label>Address</label>
+          <input type="text" id="address" readonly />
+          <button id="copy-address" title="Copy"><i class="fas fa-copy"></i></button>
+        </div>
+
+        <div class="send-form">
+          <h3>Send</h3>
+          <label>To <input type="text" id="send-to" placeholder="Nyano address" /></label>
+          <label>Amount <input type="number" id="send-amount" min="0" step="any" /></label>
+          <button id="send-button">Send</button>
+          <div id="tx-status" class="status"></div>
+        </div>
       </section>
+
       <section id="miner" class="page">
         <h2>Miner</h2>
-        <p>Miner functionality coming soon...</p>
+        <div class="miner-controls">
+          <p>Status: <span id="miner-status">stopped</span></p>
+          <button id="start-miner">Start Miner</button>
+          <button id="stop-miner" disabled>Stop Miner</button>
+        </div>
       </section>
+
       <section id="settings" class="page">
         <h2>Settings</h2>
+        <label class="toggle">
+          <input type="checkbox" id="dark-toggle" /> Dark mode
+        </label>
         <p>Platform: <span id="platform"></span></p>
+        <p>Version: <span id="version"></span></p>
       </section>
     </main>
     <script src="renderer.js"></script>

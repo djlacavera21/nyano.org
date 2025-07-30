@@ -5,6 +5,28 @@ body {
   height: 100vh;
 }
 
+.dark {
+  --bg: #1c1c1c;
+  --text: #eee;
+  --sidebar: #111a23;
+  --sidebar-active: #0e141b;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.dark #content {
+  background: #2b2b2b;
+}
+
+.dark #sidebar {
+  background: var(--sidebar);
+}
+
+.dark #sidebar li.active,
+.dark #sidebar li:hover {
+  background: var(--sidebar-active);
+}
+
 header {
   background-color: #222;
   color: #fff;
@@ -15,6 +37,10 @@ header {
   left: 0;
   right: 0;
   z-index: 1;
+}
+
+.dark header {
+  background-color: #000;
 }
 
 #sidebar {
@@ -42,6 +68,7 @@ header {
   background: #1d2735;
 }
 
+
 #content {
   flex: 1;
   margin-top: 60px;
@@ -56,4 +83,38 @@ header {
 
 .page.active {
   display: block;
+}
+
+.wallet-address,
+.send-form,
+.miner-controls {
+  margin-bottom: 20px;
+}
+
+.wallet-address input {
+  width: calc(100% - 70px);
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.send-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.send-form input {
+  padding: 6px;
+  margin-left: 4px;
+}
+
+.send-form button,
+.miner-controls button {
+  margin-top: 10px;
+  padding: 8px 12px;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #555;
 }
