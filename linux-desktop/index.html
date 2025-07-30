@@ -1,20 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Nyano Desktop</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-</head>
-<body>
-  <h1>Nyano Desktop</h1>
-  <div class="actions">
-    <button id="wallet"><i class="fas fa-wallet"></i> Wallet</button>
-    <button id="miner"><i class="fas fa-coins"></i> Miner</button>
-  </div>
-  <p class="platform">Platform: <span id="platform"></span></p>
-  <script>
-    document.getElementById('platform').textContent = window.nyano.platform;
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nyano Desktop</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Nyano Desktop</h1>
+    </header>
+    <nav id="sidebar">
+      <ul>
+        <li data-page="wallet" class="active">
+          <i class="fas fa-wallet"></i> Wallet
+        </li>
+        <li data-page="miner">
+          <i class="fas fa-coins"></i> Miner
+        </li>
+        <li data-page="settings">
+          <i class="fas fa-cog"></i> Settings
+        </li>
+      </ul>
+    </nav>
+    <main id="content">
+      <section id="wallet" class="page active">
+        <h2>Wallet</h2>
+        <p>Wallet functionality coming soon...</p>
+      </section>
+      <section id="miner" class="page">
+        <h2>Miner</h2>
+        <p>Miner functionality coming soon...</p>
+      </section>
+      <section id="settings" class="page">
+        <h2>Settings</h2>
+        <p>Platform: <span id="platform"></span></p>
+      </section>
+    </main>
+    <script src="renderer.js"></script>
+  </body>
 </html>
