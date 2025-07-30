@@ -118,3 +118,23 @@ header {
   font-size: 0.9rem;
   color: #555;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+th {
+  background: #eee;
+}
+
+.dark th {
+  background: #333;
+}
