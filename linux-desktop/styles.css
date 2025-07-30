@@ -91,6 +91,11 @@ header {
   margin-bottom: 20px;
 }
 
+.price,
+.network {
+  margin-bottom: 10px;
+}
+
 .wallet-address input {
   width: calc(100% - 70px);
   padding: 6px;

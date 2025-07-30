@@ -18,6 +18,9 @@
         <li data-page="wallet" class="active">
           <i class="fas fa-wallet"></i> Wallet
         </li>
+        <li data-page="dashboard">
+          <i class="fas fa-chart-line"></i> Dashboard
+        </li>
         <li data-page="miner">
           <i class="fas fa-coins"></i> Miner
         </li>
@@ -59,6 +62,13 @@
           </table>
           <button id="clear-history">Clear History</button>
         </div>
+      </section>
+
+      <section id="dashboard" class="page">
+        <h2>Dashboard</h2>
+        <div class="price">NANO Price: <span id="nano-price">loading...</span> USD</div>
+        <div class="network">Network Status: <span id="network-status">checking...</span></div>
+        <button id="refresh-dashboard">Refresh</button>
       </section>
 
       <section id="miner" class="page">
