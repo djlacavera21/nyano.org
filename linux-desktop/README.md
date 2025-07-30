@@ -1,6 +1,6 @@
 # Nyano Desktop
 
-This directory contains a minimal Electron application that serves as the foundation for a Nyano desktop wallet and mining interface for Linux. It currently demonstrates a basic window and preload script.
+This directory contains a minimal Electron application that serves as the foundation for a Nyano desktop wallet and mining interface for Linux. The UI now includes simple "Wallet" and "Miner" buttons and displays the host platform using an exposed preload API.
 
 ## Install dependencies
 
@@ -15,4 +15,4 @@ npm install
 npm start
 ```
 
-This is a starting point. Future work can integrate wallet functionality, mining controls, and additional features inspired by platforms like Kraken.
+This is a starting point. Future work can integrate wallet functionality, mining controls, and additional features inspired by platforms like Kraken. The interface uses Font Awesome icons bundled via `npm`.
