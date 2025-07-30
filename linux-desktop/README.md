@@ -6,7 +6,8 @@ navigation bar with separate pages for **Wallet**, **Miner**, and
 **Settings**. The platform information and application version are exposed via a
 preload API and shown on the settings page. The wallet view includes a simple
 send form and address display, while the miner page provides start/stop controls.
-A dark mode toggle is also available in the settings.
+A dark mode toggle is also available in the settings. Sent transactions are
+tracked locally and shown in a simple history table within the wallet view.
 
 ## Install dependencies
 

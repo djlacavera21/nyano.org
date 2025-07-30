@@ -62,12 +62,57 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   const sendBtn = document.getElementById('send-button');
+  const historyTable = document.getElementById('history-table');
+  const clearHistoryBtn = document.getElementById('clear-history');
+  let history = [];
+
+  const loadHistory = () => {
+    try {
+      const stored = localStorage.getItem('history');
+      history = stored ? JSON.parse(stored) : [];
+    } catch {
+      history = [];
+    }
+  };
+
+  const saveHistory = () => {
+    localStorage.setItem('history', JSON.stringify(history));
+  };
+
+  const renderHistory = () => {
+    if (!historyTable) return;
+    const tbody = historyTable.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    history.forEach(tx => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${tx.to}</td><td>${tx.amount}</td><td>${tx.date}</td>`;
+      tbody.appendChild(row);
+    });
+  };
+
+  loadHistory();
+  renderHistory();
+
   if (sendBtn) {
     sendBtn.addEventListener('click', () => {
       const to = document.getElementById('send-to').value;
       const amt = document.getElementById('send-amount').value;
       const status = document.getElementById('tx-status');
       status.textContent = `Pretending to send ${amt} NYANO to ${to}`;
+
+      const tx = { to, amount: amt, date: new Date().toLocaleString() };
+      history.unshift(tx);
+      saveHistory();
+      renderHistory();
+    });
+  }
+
+  if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener('click', () => {
+      history = [];
+      saveHistory();
+      renderHistory();
     });
   }
 
