@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Nyano Desktop</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
-    h1 { color: #333; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
 </head>
 <body>
-  <h1>Welcome to Nyano Desktop</h1>
-  <p>Platform: <span id="platform"></span></p>
+  <h1>Nyano Desktop</h1>
+  <div class="actions">
+    <button id="wallet"><i class="fas fa-wallet"></i> Wallet</button>
+    <button id="miner"><i class="fas fa-coins"></i> Miner</button>
+  </div>
+  <p class="platform">Platform: <span id="platform"></span></p>
   <script>
     document.getElementById('platform').textContent = window.nyano.platform;
   </script>
