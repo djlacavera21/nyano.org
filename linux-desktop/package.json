@@ -1,0 +1,12 @@
+{
+  "name": "nyano-desktop",
+  "version": "0.1.0",
+  "description": "Nyano desktop wallet and miner",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^37.2.4"
+  }
+}
