@@ -142,5 +142,30 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   updateMinerUI();
+
+  // Dashboard data
+  const priceEl = document.getElementById('nano-price');
+  const networkEl = document.getElementById('network-status');
+  const refreshBtn = document.getElementById('refresh-dashboard');
+
+  const fetchDashboard = async () => {
+    if (priceEl) priceEl.textContent = 'loading...';
+    if (networkEl) networkEl.textContent = 'checking...';
+    try {
+      const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd');
+      const data = await resp.json();
+      if (priceEl) priceEl.textContent = data.nano.usd;
+      if (networkEl) networkEl.textContent = 'online';
+    } catch (err) {
+      if (priceEl) priceEl.textContent = 'error';
+      if (networkEl) networkEl.textContent = 'offline';
+    }
+  };
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', fetchDashboard);
+  }
+
+  fetchDashboard();
 });
 

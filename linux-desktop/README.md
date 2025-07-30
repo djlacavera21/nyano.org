@@ -2,8 +2,8 @@
 
 This directory contains a small Electron application that acts as the starting
 point for a Nyano desktop wallet and miner. The interface uses a left side
-navigation bar with separate pages for **Wallet**, **Miner**, and
-**Settings**. The platform information and application version are exposed via a
+navigation bar with separate pages for **Wallet**, **Dashboard**, **Miner**, and
+**Settings**. The Dashboard fetches the current Nano price and basic network status. The platform information and application version are exposed via a
 preload API and shown on the settings page. The wallet view includes a simple
 send form and address display, while the miner page provides start/stop controls.
 A dark mode toggle is also available in the settings. Sent transactions are
