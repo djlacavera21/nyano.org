@@ -44,11 +44,15 @@ window.addEventListener('DOMContentLoaded', () => {
   const address = 'nyano_111111111111111111111111111111111111111111111111111111111111';
   const balanceEl = document.getElementById('balance');
   const addressEl = document.getElementById('address');
+  const qrCanvas = document.getElementById('address-qr');
   if (addressEl) {
     addressEl.value = address;
   }
   if (balanceEl) {
     balanceEl.textContent = '0';
+  }
+  if (qrCanvas && typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(qrCanvas, address, { margin: 1 }, function () {});
   }
 
   const copyBtn = document.getElementById('copy-address');
@@ -64,6 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const sendBtn = document.getElementById('send-button');
   const historyTable = document.getElementById('history-table');
   const clearHistoryBtn = document.getElementById('clear-history');
+  const exportHistoryBtn = document.getElementById('export-history');
   let history = [];
 
   const loadHistory = () => {
@@ -77,6 +82,21 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const saveHistory = () => {
     localStorage.setItem('history', JSON.stringify(history));
+  };
+
+  const exportHistory = () => {
+    if (!history.length) return;
+    const header = 'to,amount,date\n';
+    const rows = history
+      .map(tx => `${tx.to},${tx.amount},${tx.date}`)
+      .join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'history.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const renderHistory = () => {
@@ -116,27 +136,49 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (exportHistoryBtn) {
+    exportHistoryBtn.addEventListener('click', exportHistory);
+  }
+
   // Miner controls
   let mining = false;
+  let startTime = 0;
+  let timerInterval;
   const statusEl = document.getElementById('miner-status');
+  const timerEl = document.getElementById('miner-timer');
   const startBtn = document.getElementById('start-miner');
   const stopBtn = document.getElementById('stop-miner');
+
+  const updateTimer = () => {
+    if (!timerEl) return;
+    if (!mining) {
+      timerEl.textContent = '0s';
+    } else {
+      const diff = Math.floor((Date.now() - startTime) / 1000);
+      timerEl.textContent = diff + 's';
+    }
+  };
 
   const updateMinerUI = () => {
     if (statusEl) statusEl.textContent = mining ? 'running' : 'stopped';
     if (startBtn) startBtn.disabled = mining;
     if (stopBtn) stopBtn.disabled = !mining;
+    updateTimer();
   };
 
   if (startBtn) {
     startBtn.addEventListener('click', () => {
       mining = true;
+      startTime = Date.now();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimer, 1000);
       updateMinerUI();
     });
   }
   if (stopBtn) {
     stopBtn.addEventListener('click', () => {
       mining = false;
+      clearInterval(timerInterval);
       updateMinerUI();
     });
   }

@@ -39,6 +39,7 @@
           <input type="text" id="address" readonly />
           <button id="copy-address" title="Copy"><i class="fas fa-copy"></i></button>
         </div>
+        <canvas id="address-qr" width="128" height="128"></canvas>
 
         <div class="send-form">
           <h3>Send</h3>
@@ -61,6 +62,7 @@
             <tbody></tbody>
           </table>
           <button id="clear-history">Clear History</button>
+          <button id="export-history">Export CSV</button>
         </div>
       </section>
 
@@ -75,6 +77,7 @@
         <h2>Miner</h2>
         <div class="miner-controls">
           <p>Status: <span id="miner-status">stopped</span></p>
+          <p>Time: <span id="miner-timer">0s</span></p>
           <button id="start-miner">Start Miner</button>
           <button id="stop-miner" disabled>Stop Miner</button>
         </div>
@@ -89,6 +92,7 @@
         <p>Version: <span id="version"></span></p>
       </section>
     </main>
+    <script src="node_modules/qrcode/build/qrcode.js"></script>
     <script src="renderer.js"></script>
   </body>
 </html>

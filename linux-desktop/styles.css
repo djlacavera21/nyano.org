@@ -143,3 +143,8 @@ th {
 .dark th {
   background: #333;
 }
+
+#address-qr {
+  margin-top: 10px;
+  display: block;
+}
