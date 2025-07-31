@@ -35,10 +35,13 @@
     <main id="content">
       <section id="wallet" class="page active">
         <h2>Wallet</h2>
-        <div class="balance">Balance: <span id="balance">0</span> NYANO</div>
+        <div class="balance">
+          Balance: <span id="balance">0</span> NYANO
+          <button id="refresh-balance" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+        </div>
 
         <div class="wallet-address">
-          <label>Address</label>
+          <label>Address (index: <span id="current-index">0</span>)</label>
           <input type="text" id="address" readonly />
           <button id="copy-address" title="Copy"><i class="fas fa-copy"></i></button>
         </div>
@@ -122,6 +125,11 @@
             <option value="testnet">Testnet</option>
             <option value="beta">Beta</option>
           </select>
+        </div>
+        <div class="account-settings">
+          <h3>Account Index</h3>
+          <input type="number" id="account-index" min="0" step="1" />
+          <button id="save-account-index">Save</button>
         </div>
         <div class="rpc-settings">
           <h3>RPC Endpoint</h3>
