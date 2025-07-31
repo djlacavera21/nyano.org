@@ -205,3 +205,22 @@ nav.uk-navbar-container a:hover {
 .wallet-generator button {
   margin-top: 16px;
 }
+
+.wallet-generator .wallet-btn {
+  display: inline-block;
+  background: #4a90e2;
+  color: #fff;
+  padding: 8px 16px;
+  margin: 8px 4px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  transition: 0.4s;
+}
+.wallet-generator .wallet-btn:hover {
+  background: #3379ca;
+}
+.wallet-generator .wallet-btn.primary {
+  background: #3379ca;
+}
