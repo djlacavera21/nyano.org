@@ -181,7 +181,8 @@ th {
 }
 
 .seed-settings,
-.network-settings {
+.network-settings,
+.password-settings {
   margin: 20px 0;
 }
 
@@ -191,6 +192,16 @@ th {
 }
 
 .seed-settings button {
+  margin-left: 4px;
+  padding: 6px 10px;
+}
+
+.password-settings input {
+  width: 200px;
+  padding: 6px;
+}
+
+.password-settings button {
   margin-left: 4px;
   padding: 6px 10px;
 }
