@@ -1,164 +1,173 @@
 /* 
     nyano.org styles.css
     author: Ricky Hewitt <rickyhewitt.dev>
-*/ 
+*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 @font-face {
-    font-family: 'Ubuntu';
-    src: url('Ubuntu-Title.woff2') format('woff2');
-  }
-
-html, body {
-    margin: 0; padding: 0;
+  font-family: 'Ubuntu';
+  src: url('Ubuntu-Title.woff2') format('woff2');
 }
 
-h2.nyano { 
-    font-family: 'Ubuntu', sans-serif; 
-    font-display: auto;
-    font-size: 120px; 
-    color: #0E1032;
-    font-weight: 500;
-    margin: 0;
- }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #19191b;
+  color: #8f8fbb;
+  font-family: 'Open Sans', sans-serif;
+}
+
+h2.nyano {
+  font-family: 'Ubuntu', sans-serif;
+  font-display: auto;
+  font-size: 120px;
+  color: #ffffff;
+  font-weight: 500;
+  margin: 0;
+}
 
 #holding {
-    margin: 0 auto;
-    padding-top: 64px;
-    width: 640px;
-    color: #000;
-    text-align: center;
-    font-size: 0.9rem;
+  margin: 0 auto;
+  padding-top: 64px;
+  width: 640px;
+  color: #8f8fbb;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
-.links { 
-    margin-top: 32px; font-family: 'Nunito', sans-serif;
- }
+.links {
+  margin-top: 32px;
+  font-family: 'Nunito', sans-serif;
+}
 
 .links a {
-    text-transform: uppercase;
-    text-decoration: none;
-    font-size: 80%;
-    color: #676686;
-    margin-bottom: 32px;
-    /* padding-right: 16px; */
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 80%;
+  color: #c2c2e0;
+  margin-bottom: 32px;
+  /* padding-right: 16px; */
 }
 
-.links a:hover { color: #000; }
+.links a:hover {
+  color: #ffffff;
+}
 
 .links a:last-child {
-    padding-right: 0;
+  padding-right: 0;
 }
 
-.social { 
-    margin-top: 16px;
-    font-size: 300%;
+.social {
+  margin-top: 16px;
+  font-size: 300%;
 }
 
 .social a {
-    color: #888;
+  color: #c2c2e0;
 }
 
-    .social a:hover .fa-twitter {
-        color: #50abf1;
-    }
-    .social a:hover .fa-reddit {
-        color: #ff4019;
-    }
-    .social a:hover .fa-discord {
-        color: #8695d6;
-    }
-    .social a:hover .fa-telegram {
-        color: #2ba3d7;
-    }
-    .social a:hover .fa-facebook {
-        color: #3b589c;
-    }
+.social a:hover .fa-twitter {
+  color: #50abf1;
+}
+.social a:hover .fa-reddit {
+  color: #ff4019;
+}
+.social a:hover .fa-discord {
+  color: #8695d6;
+}
+.social a:hover .fa-telegram {
+  color: #2ba3d7;
+}
+.social a:hover .fa-facebook {
+  color: #3b589c;
+}
 
 div.wallets {
-    /* text-align: left; */
-    margin-bottom: 32px;
-    margin-top: 32px;
+  /* text-align: left; */
+  margin-bottom: 32px;
+  margin-top: 32px;
 }
 
 div.wallets h1 {
-    color: #777;
-    font-family: 'Roboto', sans-serif;
-    font-display: auto;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-display: auto;
 }
 
-div.wallets .btn{
-    display: inline-block;
-    text-decoration: none;
-    background: #87befd;
-    color: #FFF;
-    width: 120px;
-    height: 48px;
-    line-height: 48px;
-    border-radius: 5%;
-    text-align: center;
-    vertical-align: middle;
-    overflow: hidden;
-    transition: .4s;
-    margin-right: 16px;
-    font-family: 'Nunito', sans-serif;
-    font-display: auto;
-  }
-  div.wallets .btn:last-child {
-      margin-right: 0;
-  }
-  
-  div.wallets .btn:hover{
-      background: #668ad8;
-  }
-
-div.copyright { 
-    display: none; 
-    color: #999;
-    font-size: 70%;
-    font-family: 'Roboto', sans-serif;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    /* position: absolute; */
-    /* bottom: 8px; right: 8px; */
+div.wallets .btn {
+  display: inline-block;
+  text-decoration: none;
+  background: #4a90e2;
+  color: #fff;
+  width: 120px;
+  height: 48px;
+  line-height: 48px;
+  border-radius: 5%;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  transition: 0.4s;
+  margin-right: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-display: auto;
+}
+div.wallets .btn:last-child {
+  margin-right: 0;
 }
 
-    div.copyright a {
-        color: #999;
-        font-family: 'Roboto', sans-serif;
-        text-decoration: none;
-        display: block;
-    }
+div.wallets .btn:hover {
+  background: #357ab8;
+}
+
+div.copyright {
+  display: none;
+  color: #c2c2e0;
+  font-size: 70%;
+  font-family: 'Roboto', sans-serif;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  /* position: absolute; */
+  /* bottom: 8px; right: 8px; */
+}
+
+div.copyright a {
+  color: #c2c2e0;
+  font-family: 'Roboto', sans-serif;
+  text-decoration: none;
+  display: block;
+}
 
 @media only screen and (max-width: 600px) {
-    #holding {
-        margin: 0 0;
-        width: 100%;
-        text-align: center;
-        padding-top: 32px;
-    }
+  #holding {
+    margin: 0 0;
+    width: 100%;
+    text-align: center;
+    padding-top: 32px;
+  }
 
-    div.wallets .btn{
-        /* display: block;
+  div.wallets .btn {
+    /* display: block;
         margin: 0 auto;
         margin-bottom: 16px; */
-        width: 80px;
-        height: 44px;
-        line-height: 44px;
-        font-size: 90%;
-      }
+    width: 80px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 90%;
+  }
 
-      div.wallets .btn:last-child {
-          margin: 0 auto;
-      }
+  div.wallets .btn:last-child {
+    margin: 0 auto;
+  }
 }
 
 @media only screen and (min-width: 900px) {
-    div.copyright {
-        display: block;
-        text-align: right;
-        margin-right: 16px;
-    }
+  div.copyright {
+    display: block;
+    text-align: right;
+    margin-right: 16px;
+  }
 }
