@@ -16,7 +16,8 @@ wallet view along with a QR code.
 
 You can now manage saved addresses on the **Contacts** page. Stored contacts
 let you quickly fill the send form in the wallet view and are persisted in the
-browser's local storage.
+browser's local storage. Contacts can be edited or removed at any time using the
+actions in the table.
 
 The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you

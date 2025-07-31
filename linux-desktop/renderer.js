@@ -280,7 +280,7 @@ window.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = '';
     contacts.forEach((c, i) => {
       const row = document.createElement('tr');
-      row.innerHTML = `<td>${c.name}</td><td>${c.address}</td><td><button data-idx="${i}" class="use-contact">Use</button> <button data-idx="${i}" class="delete-contact">Delete</button></td>`;
+      row.innerHTML = `<td>${c.name}</td><td>${c.address}</td><td><button data-idx="${i}" class="use-contact">Use</button> <button data-idx="${i}" class="edit-contact">Edit</button> <button data-idx="${i}" class="delete-contact">Delete</button></td>`;
       tbody.appendChild(row);
     });
 
@@ -293,6 +293,20 @@ window.addEventListener('DOMContentLoaded', () => {
         sidebarItems.forEach(i => {
           if (i.getAttribute('data-page') === 'wallet') i.click();
         });
+      });
+    });
+
+    tbody.querySelectorAll('.edit-contact').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = e.target.getAttribute('data-idx');
+        const c = contacts[idx];
+        const name = prompt('Edit name', c.name);
+        if (name === null) return;
+        const addr = prompt('Edit address', c.address);
+        if (addr === null) return;
+        contacts[idx] = { name: name.trim(), address: addr.trim() };
+        saveContacts();
+        renderContacts();
       });
     });
 
