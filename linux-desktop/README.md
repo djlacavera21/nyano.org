@@ -11,6 +11,8 @@ preload API and shown on the settings page. The wallet view includes a simple
 send form and address display, while the miner page provides start/stop controls.
 A dark mode toggle is also available in the settings. Sent transactions are
 tracked locally and shown in a simple history table within the wallet view.
+Each entry now includes the transaction hash with a quick link to NyanoScan so
+you can easily inspect the block details.
 
 Recent updates introduce basic wallet management. You can generate or import a
 seed on the **Settings** page and select which network (mainnet, testnet, or

@@ -42,6 +42,8 @@ You can also export or import the entire application settings from the Settings
 page or reset all saved data. Transactions created in the wallet view are now
 broadcast to the configured RPC endpoint, so the wallet is usable on the Nyano
 network.
+Transaction history entries in the wallet now show the resulting block hash with
+links to NyanoScan for easy verification.
 The wallet page now also shows the currently selected network so you can easily
 confirm whether you are on mainnet, testnet or beta.
 The desktop app now saves its window size and position so it reopens exactly
