@@ -48,6 +48,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const networkSelect = document.getElementById('network-select');
   const rpcInput = document.getElementById('rpc-url');
   const saveRpcBtn = document.getElementById('save-rpc');
+  const indexInput = document.getElementById('account-index');
+  const saveIndexBtn = document.getElementById('save-account-index');
+  const currentIndexEl = document.getElementById('current-index');
 
   const storedSeed = localStorage.getItem('seed') || '';
   if (seedInput) seedInput.value = storedSeed;
@@ -55,17 +58,23 @@ window.addEventListener('DOMContentLoaded', () => {
   if (networkSelect) networkSelect.value = storedNetwork;
   const storedRpc = localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org';
   if (rpcInput) rpcInput.value = storedRpc;
+  const storedIndex = parseInt(localStorage.getItem('accountIndex') || '0', 10);
+  if (indexInput) indexInput.value = storedIndex;
+
+  let accountIndex = storedIndex;
 
   const updateAddress = () => {
     if (!seedInput) return;
     const seed = seedInput.value.trim();
     if (!seed) return;
-    const addr = window.nyano.deriveAddress(seed, 0);
+    const addr = window.nyano.deriveAddress(seed, accountIndex);
     address = addr;
     if (addressEl) addressEl.value = addr;
+    if (currentIndexEl) currentIndexEl.textContent = accountIndex;
     if (qrCanvas && typeof QRCode !== 'undefined') {
       QRCode.toCanvas(qrCanvas, addr, { margin: 1 }, () => {});
     }
+    fetchBalance();
   };
 
   if (toggleSeedBtn && seedInput) {
@@ -99,10 +108,46 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (saveIndexBtn && indexInput) {
+    saveIndexBtn.addEventListener('click', () => {
+      accountIndex = parseInt(indexInput.value, 10) || 0;
+      localStorage.setItem('accountIndex', accountIndex.toString());
+      updateAddress();
+    });
+  }
+
+  if (currentIndexEl) {
+    currentIndexEl.textContent = accountIndex;
+  }
+
   const getRpcUrl = () => (rpcInput ? rpcInput.value.trim() : storedRpc);
 
+  const fetchBalance = async () => {
+    if (!balanceEl) return;
+    balanceEl.textContent = '...';
+    try {
+      const resp = await fetch(getRpcUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'account_balance', account: address })
+      });
+      const data = await resp.json();
+      if (data && data.balance) {
+        const raw = BigInt(data.balance);
+        const nyano = Number(raw) / 1e30;
+        balanceEl.textContent = nyano.toString();
+      } else {
+        balanceEl.textContent = '0';
+      }
+    } catch (err) {
+      balanceEl.textContent = 'error';
+    }
+  };
+
   // Wallet data
-  let address = storedSeed ? window.nyano.deriveAddress(storedSeed, 0) : "nyano_11111111111111111111111111111111111111111111111111111111111";
+  let address = storedSeed
+    ? window.nyano.deriveAddress(storedSeed, accountIndex)
+    : "nyano_11111111111111111111111111111111111111111111111111111111111";
   const balanceEl = document.getElementById('balance');
   const addressEl = document.getElementById('address');
   const qrCanvas = document.getElementById('address-qr');
@@ -116,8 +161,10 @@ window.addEventListener('DOMContentLoaded', () => {
     QRCode.toCanvas(qrCanvas, address, { margin: 1 }, function () {});
   }
   if (storedSeed) updateAddress();
+  else fetchBalance();
 
   const copyBtn = document.getElementById('copy-address');
+  const refreshBalanceBtn = document.getElementById('refresh-balance');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       updateAddress();
@@ -126,6 +173,9 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => (copyBtn.textContent = ''), 1000);
       });
     });
+  }
+  if (refreshBalanceBtn) {
+    refreshBalanceBtn.addEventListener('click', fetchBalance);
   }
 
   const sendBtn = document.getElementById('send-button');

@@ -164,6 +164,25 @@ th {
   padding: 6px 10px;
 }
 
+.account-settings {
+  margin: 20px 0;
+}
+
+.account-settings input {
+  width: 80px;
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.account-settings button {
+  padding: 6px 10px;
+}
+
+.balance button {
+  margin-left: 4px;
+  padding: 2px 6px;
+}
+
 .add-contact {
   margin-bottom: 20px;
 }
