@@ -1,3 +1,8 @@
+function updatePrice(value) {
+  const priceEl = document.getElementById('nano-price');
+  if (priceEl) priceEl.textContent = value;
+}
+
 async function fetchPrice() {
   const priceEl = document.getElementById('nano-price');
   if (!priceEl) return;
@@ -8,13 +13,22 @@ async function fetchPrice() {
     );
     if (!resp.ok) throw new Error('network');
     const data = await resp.json();
-    priceEl.textContent = data.nano.usd.toFixed(2);
+    const price = data.nano.usd.toFixed(2);
+    updatePrice(price);
+    localStorage.setItem('nano-price', price);
   } catch (err) {
-    priceEl.textContent = 'n/a';
+    const cached = localStorage.getItem('nano-price');
+    if (cached) {
+      updatePrice(`${cached} (cached)`);
+    } else {
+      updatePrice('n/a');
+    }
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const cached = localStorage.getItem('nano-price');
+  if (cached) updatePrice(cached);
   fetchPrice();
   setInterval(fetchPrice, 60000);
 });
