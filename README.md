@@ -37,7 +37,7 @@ npm install
 ## Offline access
 The site registers a small service worker (`sw.js`) to cache static assets so
 that pages remain available when offline. Load the homepage once and it will
-work without a network connection. The service worker can be removed via your
+work without a network connection. When offline, requests will show a lightweight offline page if the resource is unavailable. The service worker can be removed via your
 browser settings if needed.
 ## Desktop wallet
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
