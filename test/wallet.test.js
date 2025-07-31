@@ -35,6 +35,15 @@ async function run() {
   const decrypted = wallet.decryptSeed(encrypted, 'pass');
   assert.strictEqual(decrypted, w.seed);
 
+  const tmp = require('os').tmpdir();
+  const path = require('path');
+  const fs = require('fs');
+  const file = path.join(tmp, 'wallet.json');
+  wallet.saveWalletToFile(w, file, 'secret');
+  const loaded = wallet.loadWalletFromFile(file, 'secret');
+  assert.strictEqual(loaded.address, w.address);
+  fs.unlinkSync(file);
+
   console.log('All wallet tests passed');
 }
 
