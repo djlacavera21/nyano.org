@@ -729,6 +729,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const networkEl = document.getElementById('network-status');
   const blockCountEl = document.getElementById('block-count');
   const peerCountEl = document.getElementById('peer-count');
+  const syncEl = document.getElementById('sync-progress');
+  const latencyEl = document.getElementById('rpc-latency');
+  const nodeVerEl = document.getElementById('node-version');
   const refreshBtn = document.getElementById('refresh-dashboard');
 
   async function fetchDashboard() {
@@ -736,6 +739,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (networkEl) networkEl.textContent = 'checking...';
     if (blockCountEl) blockCountEl.textContent = '...';
     if (peerCountEl) peerCountEl.textContent = '...';
+    if (syncEl) syncEl.textContent = '-';
+    if (latencyEl) latencyEl.textContent = '-';
+    if (nodeVerEl) nodeVerEl.textContent = '-';
     try {
       const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd');
       const data = await resp.json();
@@ -745,6 +751,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     try {
       const rpcUrl = getRpcUrl();
+      const start = performance.now();
       const [versionResp, blockResp, peersResp] = await Promise.all([
         fetch(rpcUrl, {
           method: 'POST',
@@ -762,13 +769,22 @@ window.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ action: 'peers' })
         })
       ]);
+      const latency = Math.round(performance.now() - start);
+      if (latencyEl) latencyEl.textContent = latency + 'ms';
 
       const verData = await versionResp.json();
       if (networkEl) networkEl.textContent = verData.node_vendor || 'online';
+      if (nodeVerEl && verData.rpc_version) nodeVerEl.textContent = verData.rpc_version;
 
       const blockData = await blockResp.json();
       if (blockCountEl && blockData.count !== undefined) {
         blockCountEl.textContent = blockData.count;
+      }
+      if (syncEl && blockData.count !== undefined && blockData.unchecked !== undefined) {
+        const count = parseInt(blockData.count, 10);
+        const unchecked = parseInt(blockData.unchecked, 10);
+        const progress = count ? Math.round(((count - unchecked) / count) * 100) : 0;
+        syncEl.textContent = progress + '%';
       }
 
       const peersData = await peersResp.json();
@@ -779,6 +795,9 @@ window.addEventListener('DOMContentLoaded', () => {
       if (networkEl) networkEl.textContent = 'offline';
       if (blockCountEl) blockCountEl.textContent = '-';
       if (peerCountEl) peerCountEl.textContent = '-';
+      if (syncEl) syncEl.textContent = '-';
+      if (latencyEl) latencyEl.textContent = '-';
+      if (nodeVerEl) nodeVerEl.textContent = '-';
     }
   }
 
