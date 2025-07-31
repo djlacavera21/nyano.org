@@ -39,7 +39,9 @@ The app now includes seed management, network selection on the settings page and
 where addresses can be added, edited or removed. Contacts support import and export
 to a JSON file for easy backup.
 You can also export or import the entire application settings from the Settings
-page or reset all saved data.
+page or reset all saved data. Transactions created in the wallet view are now
+broadcast to the configured RPC endpoint, so the wallet is usable on the Nyano
+network.
 The desktop app now saves its window size and position so it reopens exactly
 where you left it. A basic application menu provides Quit and About actions; the
 About dialog shows the current version number.
