@@ -40,6 +40,9 @@ that pages remain available when offline. Load the homepage once and it will
 work without a network connection. When offline, requests will show a lightweight offline page if the resource is unavailable. The service worker can be removed via your
 browser settings if needed.
 
+An "offline" banner is displayed when the browser loses connectivity. It
+automatically hides again once the connection is restored.
+
 The homepage also caches the latest Nano price and network status in
 `localStorage`. When the APIs are unreachable, the last known values are shown
 with a `(cached)` label so the page still displays useful information even
