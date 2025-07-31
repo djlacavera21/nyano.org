@@ -1,21 +1,53 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { generateWallet } = require('../lib/wallet');
+const {
+  generateWallet,
+  deriveWalletFromSeed,
+  deriveWalletFromMnemonic,
+} = require('../lib/wallet');
 
-const outPath = process.argv[2];
-const index = process.argv[3] ? parseInt(process.argv[3], 10) : 0;
+let outPath;
+let index = 0;
+let prefix = 'nano_';
+let seed;
+let mnemonic;
 
-const { seed, mnemonic, address } = generateWallet(index);
+const args = process.argv.slice(2);
+for (let i = 0; i < args.length; i++) {
+  switch (args[i]) {
+    case '--index':
+      index = parseInt(args[++i], 10);
+      break;
+    case '--prefix':
+      prefix = args[++i];
+      break;
+    case '--seed':
+      seed = args[++i];
+      break;
+    case '--mnemonic':
+      mnemonic = args[++i];
+      break;
+    default:
+      if (!outPath) outPath = args[i];
+  }
+}
 
-const data = { seed, mnemonic, address };
+let wallet;
+if (seed) {
+  wallet = deriveWalletFromSeed(seed, index, prefix);
+} else if (mnemonic) {
+  wallet = deriveWalletFromMnemonic(mnemonic, index, prefix);
+} else {
+  wallet = generateWallet(index, prefix);
+}
 
 if (outPath) {
   const file = path.resolve(outPath);
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  fs.writeFileSync(file, JSON.stringify(wallet, null, 2));
   console.log(`Wallet written to ${file}`);
 } else {
-  console.log(`Seed: ${seed}`);
-  console.log(`Mnemonic: ${mnemonic}`);
-  console.log(`Address: ${address}`);
+  console.log(`Seed: ${wallet.seed}`);
+  console.log(`Mnemonic: ${wallet.mnemonic}`);
+  console.log(`Address: ${wallet.address}`);
 }

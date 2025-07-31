@@ -5,6 +5,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.4",
     "bip39": "^3.1.0",
+    "express": "^5.1.0",
     "nanocurrency": "^2.5.0"
   },
   "devDependencies": {
@@ -24,7 +25,8 @@
     "lint": "eslint \"**/*.js\"",
     "format": "prettier \"**/*.{js,css,html}\" --write",
     "prepare": "husky install",
-    "generate-wallet": "node scripts/generate-wallet.js"
+    "generate-wallet": "node scripts/generate-wallet.js",
+    "wallet-api": "node scripts/wallet-server.js"
   },
   "repository": {
     "type": "git",
