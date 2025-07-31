@@ -65,6 +65,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const exportSeedBtn = document.getElementById('export-seed');
   const importSeedBtn = document.getElementById('import-seed');
   const seedFileInput = document.getElementById('seed-file');
+  const passwordInput = document.getElementById('password-input');
+  const setPasswordBtn = document.getElementById('set-password');
+  const unlockWalletBtn = document.getElementById('unlock-wallet');
   const networkSelect = document.getElementById('network-select');
   const rpcInput = document.getElementById('rpc-url');
   const saveRpcBtn = document.getElementById('save-rpc');
@@ -76,8 +79,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const resetSettingsBtn = document.getElementById('reset-settings');
   const settingsFileInput = document.getElementById('settings-file');
 
-  const storedSeed = localStorage.getItem('seed') || '';
-  if (seedInput) seedInput.value = storedSeed;
+  const encryptedSeed = localStorage.getItem('encryptedSeed');
+  const storedSeed = encryptedSeed ? '' : localStorage.getItem('seed') || '';
+  if (seedInput) {
+    seedInput.value = storedSeed;
+    if (encryptedSeed && !storedSeed) seedInput.disabled = true;
+  }
   const storedNetwork = localStorage.getItem('network') || 'mainnet';
   if (networkSelect) networkSelect.value = storedNetwork;
   const storedRpc = localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org';
@@ -115,7 +122,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (saveSeedBtn && seedInput) {
     saveSeedBtn.addEventListener('click', () => {
-      localStorage.setItem('seed', seedInput.value.trim());
+      const val = seedInput.value.trim();
+      if (!val) return;
+      if (localStorage.getItem('encryptedSeed')) {
+        if (!passwordInput || !passwordInput.value) {
+          alert('Enter password to save');
+          return;
+        }
+        const enc = window.nyano.encryptSeed(val, passwordInput.value);
+        localStorage.setItem('encryptedSeed', enc);
+        localStorage.removeItem('seed');
+      } else {
+        localStorage.setItem('seed', val);
+      }
       updateAddress();
     });
   }
@@ -139,7 +158,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const reader = new FileReader();
     reader.onload = () => {
       seedInput.value = (reader.result || '').trim();
-      localStorage.setItem('seed', seedInput.value);
+      const val = seedInput.value;
+      if (localStorage.getItem('encryptedSeed')) {
+        if (!passwordInput || !passwordInput.value) {
+          alert('Enter password to import');
+          return;
+        }
+        const enc = window.nyano.encryptSeed(val, passwordInput.value);
+        localStorage.setItem('encryptedSeed', enc);
+        localStorage.removeItem('seed');
+      } else {
+        localStorage.setItem('seed', val);
+      }
       updateAddress();
     };
     reader.readAsText(file);
@@ -157,9 +187,41 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (setPasswordBtn && passwordInput && seedInput) {
+    setPasswordBtn.addEventListener('click', () => {
+      const pw = passwordInput.value.trim();
+      const seed = seedInput.value.trim();
+      if (!pw || !seed) return;
+      const enc = window.nyano.encryptSeed(seed, pw);
+      localStorage.setItem('encryptedSeed', enc);
+      localStorage.removeItem('seed');
+      seedInput.value = '';
+      seedInput.disabled = true;
+      alert('Wallet locked');
+    });
+  }
+
+  if (unlockWalletBtn && passwordInput && seedInput) {
+    unlockWalletBtn.addEventListener('click', () => {
+      const pw = passwordInput.value.trim();
+      const enc = localStorage.getItem('encryptedSeed');
+      if (!pw || !enc) return;
+      const dec = window.nyano.decryptSeed(enc, pw);
+      if (!dec) {
+        alert('Invalid password');
+        return;
+      }
+      seedInput.disabled = false;
+      seedInput.value = dec;
+      updateAddress();
+      alert('Wallet unlocked');
+    });
+  }
+
   const exportSettings = () => {
     const data = {
       seed: localStorage.getItem('seed') || '',
+      encryptedSeed: localStorage.getItem('encryptedSeed') || '',
       network: localStorage.getItem('network') || 'mainnet',
       rpcUrl: localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org',
       accountIndex: parseInt(localStorage.getItem('accountIndex') || '0', 10),
@@ -184,7 +246,14 @@ window.addEventListener('DOMContentLoaded', () => {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result);
-        if (data.seed !== undefined) {
+        if (data.encryptedSeed) {
+          localStorage.setItem('encryptedSeed', data.encryptedSeed);
+          localStorage.removeItem('seed');
+          if (seedInput) {
+            seedInput.value = '';
+            seedInput.disabled = true;
+          }
+        } else if (data.seed !== undefined) {
           localStorage.setItem('seed', data.seed);
           if (seedInput) seedInput.value = data.seed;
         }
@@ -220,6 +289,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const resetSettings = () => {
     localStorage.clear();
     if (seedInput) seedInput.value = '';
+    if (seedInput) seedInput.disabled = false;
     if (networkSelect) networkSelect.value = 'mainnet';
     if (rpcInput) rpcInput.value = 'https://rpc.nyano.org';
     accountIndex = 0;
@@ -300,7 +370,7 @@ window.addEventListener('DOMContentLoaded', () => {
     QRCode.toCanvas(qrCanvas, address, { margin: 1 }, function () {});
   }
   if (storedSeed) updateAddress();
-  else fetchBalance();
+  else if (!encryptedSeed) fetchBalance();
 
   const copyBtn = document.getElementById('copy-address');
   const viewAddrBtn = document.getElementById('view-address');

@@ -42,6 +42,12 @@ You can also export your wallet seed to a text file or import it from one using
 the new **Export** and **Import** buttons in the Wallet Seed section. This makes
 backing up and restoring your wallet straightforward.
 
+The wallet seed can now be protected with a password. Use the **Set Password**
+button to encrypt the seed with your chosen passphrase. When a password is set
+the seed field is locked until you click **Unlock** and provide the correct
+password. Encrypted seeds are persisted in local storage so your wallet remains
+secured across sessions.
+
 The Settings page now also includes **Export Settings** and **Import Settings**
 options. These let you back up or restore all application data including your
 seed, contacts, history and preferences. A **Reset** button is available to

@@ -1,5 +1,6 @@
 const { contextBridge, shell } = require('electron');
 const { version } = require('./package.json');
+const crypto = require('crypto');
 const {
   generateSeed,
   deriveAddress,
@@ -21,5 +22,25 @@ contextBridge.exposeInMainWorld('nyano', {
   createBlock,
   convert,
   Unit,
-  openExternal: url => shell.openExternal(url)
+  openExternal: url => shell.openExternal(url),
+  encryptSeed: (seed, password) => {
+    const iv = crypto.randomBytes(16);
+    const key = crypto.createHash('sha256').update(password).digest();
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    const enc = Buffer.concat([cipher.update(seed, 'utf8'), cipher.final()]);
+    return iv.toString('hex') + ':' + enc.toString('hex');
+  },
+  decryptSeed: (enc, password) => {
+    try {
+      const [ivHex, dataHex] = enc.split(':');
+      const iv = Buffer.from(ivHex, 'hex');
+      const data = Buffer.from(dataHex, 'hex');
+      const key = crypto.createHash('sha256').update(password).digest();
+      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+      const dec = Buffer.concat([decipher.update(data), decipher.final()]);
+      return dec.toString('utf8');
+    } catch {
+      return null;
+    }
+  }
 });
