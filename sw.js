@@ -13,6 +13,7 @@ const ASSETS = [
   '/safari-pinned-tab.svg',
   '/js/price.js',
   '/js/network.js',
+  '/js/offline.js',
   '/css/Ubuntu-Title.woff2',
 ];
 self.addEventListener('install', (event) => {
