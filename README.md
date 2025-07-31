@@ -156,8 +156,8 @@ npm run generate-wallet -- wallet.json
 You can also specify options:
 
 ```
-npm run generate-wallet -- --index 2 --prefix nyano_
-npm run generate-wallet -- --seed <hex_seed>
+npm run generate-wallet -- --index 2 --prefix nyano_ --count 3
+npm run generate-wallet -- --seed <hex_seed> --count 2
 npm run generate-wallet -- --mnemonic "word list..."
 ```
 
@@ -169,5 +169,8 @@ npm run wallet-api
 
 It exposes two endpoints:
 
-- `GET /generate` – returns a new wallet
-- `POST /derive` – derive from a provided seed or mnemonic
+- `GET /generate` – returns a new wallet. Optional query parameters `index`,
+  `prefix` and `count` allow specifying the account index, address prefix and
+  number of addresses to generate.
+- `POST /derive` – derive from a provided seed or mnemonic. Send `index`,
+  `prefix` and `count` in the JSON body to control the derived addresses.
