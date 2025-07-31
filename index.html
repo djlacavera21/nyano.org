@@ -75,6 +75,10 @@
           your local traditional currency.
         </p>
         <p>Current Nano price: <span id="nano-price">-</span> USD</p>
+        <p>
+          Network status: <span id="network-status">-</span>, Blocks:
+          <span id="block-count">-</span>
+        </p>
       </div>
     </div>
 
@@ -89,6 +93,7 @@
       src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"
     ></script>
     <script defer src="js/price.js"></script>
+    <script defer src="js/network.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
