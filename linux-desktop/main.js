@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const { name, version } = require('./package.json');
 
 function getStatePath() {
@@ -33,6 +33,16 @@ function saveWindowState(win) {
 let nodeProcess;
 function startLocalNode() {
   const nodePath = path.join(__dirname, '..', 'nano-node', 'build', 'nano_node');
+  if (!fs.existsSync(nodePath)) {
+    const setupScript = path.join(__dirname, '..', 'scripts', 'setup-nano-node.sh');
+    if (fs.existsSync(setupScript)) {
+      try {
+        spawnSync(setupScript, { stdio: 'inherit' });
+      } catch (err) {
+        console.error('Failed to build nano_node', err);
+      }
+    }
+  }
   if (fs.existsSync(nodePath)) {
     nodeProcess = spawn(nodePath, ['--daemon']);
     nodeProcess.on('error', err => {

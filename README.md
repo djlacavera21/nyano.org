@@ -33,6 +33,8 @@ If you are interested in including a link on nyano.org, please list it here firs
 
 ## installation
 npm install
+You can build a packaged desktop wallet and local node by running
+`./install.sh` on Linux systems.
 ## Desktop wallet
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
 The app now includes seed management, network selection on the settings page and a contacts view
@@ -57,7 +59,9 @@ npm start
 ```
 
 If a `nano_node` binary exists under `nano-node/build`, the desktop app
-will automatically launch it in daemon mode when started.
+will automatically launch it in daemon mode when started. When the
+binary is missing, the app tries to build it by running
+`scripts/setup-nano-node.sh`.
 
 ## Running a local Nano node
 You can build and run your own Nano node for use with the desktop wallet.
