@@ -88,6 +88,23 @@
         <label class="toggle">
           <input type="checkbox" id="dark-toggle" /> Dark mode
         </label>
+        <div class="seed-settings">
+          <h3>Wallet Seed</h3>
+          <input type="password" id="seed-input" placeholder="Enter seed" />
+          <button id="toggle-seed" title="Show/Hide">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button id="generate-seed">Generate</button>
+          <button id="save-seed">Save</button>
+        </div>
+        <div class="network-settings">
+          <h3>Network</h3>
+          <select id="network-select">
+            <option value="mainnet">Mainnet</option>
+            <option value="testnet">Testnet</option>
+            <option value="beta">Beta</option>
+          </select>
+        </div>
         <p>Platform: <span id="platform"></span></p>
         <p>Version: <span id="version"></span></p>
       </section>

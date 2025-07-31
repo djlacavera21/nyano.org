@@ -148,3 +148,18 @@ th {
   margin-top: 10px;
   display: block;
 }
+
+.seed-settings,
+.network-settings {
+  margin: 20px 0;
+}
+
+.seed-settings input {
+  width: 300px;
+  padding: 6px;
+}
+
+.seed-settings button {
+  margin-left: 4px;
+  padding: 6px 10px;
+}

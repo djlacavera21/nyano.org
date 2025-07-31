@@ -34,7 +34,8 @@ If you are interested in including a link on nyano.org, please list it here firs
 ## installation
 npm install
 ## Desktop wallet
-See [linux-desktop](linux-desktop/) for an Electron-based starter wallet and miner.
+See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
+The app now includes seed management and network selection on the settings page.
 
 ```
 cd linux-desktop
