@@ -86,3 +86,14 @@ or simply run the convenience script:
 
 Set the RPC endpoint in the desktop wallet settings to `http://localhost:7076` to
 interact with your local node.
+
+## Updating the local node
+If the `nano-node` source was built previously, you can update to the latest
+version and rebuild the binary using the helper script:
+
+```bash
+./scripts/update-nano-node.sh
+```
+
+The script fetches the newest changes from the `nano-node` repository and
+recompiles the daemon in `nano-node/build`.
