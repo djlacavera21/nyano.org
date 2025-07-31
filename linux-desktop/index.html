@@ -18,6 +18,9 @@
         <li data-page="wallet" class="active">
           <i class="fas fa-wallet"></i> Wallet
         </li>
+        <li data-page="contacts">
+          <i class="fas fa-address-book"></i> Contacts
+        </li>
         <li data-page="dashboard">
           <i class="fas fa-chart-line"></i> Dashboard
         </li>
@@ -64,6 +67,21 @@
           <button id="clear-history">Clear History</button>
           <button id="export-history">Export CSV</button>
         </div>
+      </section>
+
+      <section id="contacts" class="page">
+        <h2>Contacts</h2>
+        <div class="add-contact">
+          <input type="text" id="contact-name" placeholder="Name" />
+          <input type="text" id="contact-address" placeholder="Nyano address" />
+          <button id="add-contact">Add</button>
+        </div>
+        <table id="contacts-table">
+          <thead>
+            <tr><th>Name</th><th>Address</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </section>
 
       <section id="dashboard" class="page">

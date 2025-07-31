@@ -163,3 +163,16 @@ th {
   margin-left: 4px;
   padding: 6px 10px;
 }
+
+.add-contact {
+  margin-bottom: 20px;
+}
+
+.add-contact input {
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.add-contact button {
+  padding: 6px 10px;
+}
