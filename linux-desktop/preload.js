@@ -7,6 +7,8 @@ const {
   deriveSecretKey,
   derivePublicKey,
   createBlock,
+  computeWork,
+  validateWork,
   convert,
   Unit,
 } = require('nanocurrency');
@@ -22,6 +24,8 @@ contextBridge.exposeInMainWorld('nyano', {
   deriveSecretKey,
   derivePublicKey,
   createBlock,
+  computeWork,
+  validateWork,
   convert,
   Unit,
   openExternal: (url) => shell.openExternal(url),
