@@ -13,6 +13,8 @@ const {
   validateMnemonic,
   validateAddress,
   validateSecretKey,
+  encryptSeed,
+  decryptSeed,
 } = require('../lib/wallet');
 
 const app = express();
@@ -70,6 +72,34 @@ app.post('/keys', (req, res) => {
     res.json({ secretKey, publicKey });
   } catch {
     res.status(400).json({ error: 'invalid data' });
+  }
+});
+
+app.post('/encrypt', (req, res) => {
+  const { seed, password } = req.body;
+  if (!seed || !password) {
+    return res.status(400).json({ error: 'seed and password required' });
+  }
+  try {
+    const encryptedSeed = encryptSeed(seed, password);
+    res.json({ encryptedSeed });
+  } catch {
+    res.status(500).json({ error: 'encryption failed' });
+  }
+});
+
+app.post('/decrypt', (req, res) => {
+  const { encryptedSeed, password } = req.body;
+  if (!encryptedSeed || !password) {
+    return res
+      .status(400)
+      .json({ error: 'encryptedSeed and password required' });
+  }
+  try {
+    const seed = decryptSeed(encryptedSeed, password);
+    res.json({ seed });
+  } catch {
+    res.status(400).json({ error: 'decryption failed' });
   }
 });
 
