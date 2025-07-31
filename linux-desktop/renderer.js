@@ -261,9 +261,11 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       const data = await resp.json();
       if (data && data.balance) {
-        const raw = BigInt(data.balance);
-        const nyano = Number(raw) / 1e30;
-        balanceEl.textContent = nyano.toString();
+        const nyano = window.nyano.convert(data.balance, {
+          from: window.nyano.Unit.raw,
+          to: window.nyano.Unit.NANO
+        });
+        balanceEl.textContent = nyano;
       } else {
         balanceEl.textContent = '0';
       }
@@ -356,16 +358,95 @@ window.addEventListener('DOMContentLoaded', () => {
   renderHistory();
 
   if (sendBtn) {
-    sendBtn.addEventListener('click', () => {
-      const to = document.getElementById('send-to').value;
-      const amt = document.getElementById('send-amount').value;
+    sendBtn.addEventListener('click', async () => {
+      const to = document.getElementById('send-to').value.trim();
+      const amt = document.getElementById('send-amount').value.trim();
       const status = document.getElementById('tx-status');
-      status.textContent = `Pretending to send ${amt} NYANO to ${to}`;
+      if (!seedInput || !seedInput.value.trim()) {
+        status.textContent = 'No seed configured';
+        return;
+      }
+      const amount = parseFloat(amt);
+      if (!to || Number.isNaN(amount) || amount <= 0) {
+        status.textContent = 'Invalid amount or address';
+        return;
+      }
 
-      const tx = { to, amount: amt, date: new Date().toLocaleString() };
-      history.unshift(tx);
-      saveHistory();
-      renderHistory();
+      status.textContent = 'Sending...';
+
+      const seed = seedInput.value.trim();
+      const secretKey = window.nyano.deriveSecretKey(seed, accountIndex);
+      const publicKey = window.nyano.derivePublicKey(secretKey);
+      const acct = window.nyano.deriveAddress(seed, accountIndex);
+
+      try {
+        const rpcUrl = getRpcUrl();
+        const infoResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'account_info', account: acct })
+        });
+        const info = await infoResp.json();
+        const previous = info.frontier || null;
+        const representative = info.representative || acct;
+        const balanceRaw = BigInt(info.balance || '0');
+        const sendRaw = BigInt(
+          window.nyano.convert(amt, {
+            from: window.nyano.Unit.NANO,
+            to: window.nyano.Unit.raw
+          })
+        );
+        if (sendRaw > balanceRaw) {
+          status.textContent = 'Insufficient balance';
+          return;
+        }
+        const newBalance = balanceRaw - sendRaw;
+        const workHash = previous || publicKey;
+        const workResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'work_generate', hash: workHash })
+        });
+        const workData = await workResp.json();
+        if (!workData.work) {
+          status.textContent = 'Failed to generate work';
+          return;
+        }
+
+        const blockData = {
+          previous,
+          representative,
+          balance: newBalance.toString(),
+          link: to,
+          work: workData.work
+        };
+
+        const { block, hash } = window.nyano.createBlock(secretKey, blockData);
+        const procResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'process',
+            json_block: 'true',
+            subtype: previous ? 'send' : 'open',
+            block
+          })
+        });
+        const proc = await procResp.json();
+        if (proc.hash) {
+          status.textContent = `Sent! ${proc.hash}`;
+          const tx = { to, amount: amt, date: new Date().toLocaleString() };
+          history.unshift(tx);
+          saveHistory();
+          renderHistory();
+          fetchBalance();
+          fetchNetworkHistory();
+        } else {
+          status.textContent = 'Transaction failed';
+        }
+      } catch (err) {
+        status.textContent = 'Error sending transaction';
+      }
     });
   }
 

@@ -27,6 +27,10 @@ The wallet page can now fetch and display your account history from the
 configured RPC endpoint. Click **Refresh** in the history section to load the
 latest 20 transactions from the network.
 
+The send form has been updated to create and broadcast real transactions via the
+configured RPC node. A valid wallet seed and sufficient balance are required;
+any errors from the node are shown next to the form.
+
 The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you
 can update the URL to point to any compatible node.
