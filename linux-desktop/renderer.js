@@ -420,9 +420,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const exportHistory = () => {
     if (!history.length) return;
-    const header = 'to,amount,date\n';
+    const header = 'to,amount,date,hash\n';
     const rows = history
-      .map(tx => `${tx.to},${tx.amount},${tx.date}`)
+      .map(tx => `${tx.to},${tx.amount},${tx.date},${tx.hash || ''}`)
       .join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -440,8 +440,18 @@ window.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML = '';
     history.forEach(tx => {
       const row = document.createElement('tr');
-      row.innerHTML = `<td>${tx.to}</td><td>${tx.amount}</td><td>${tx.date}</td>`;
+      const hashCell = tx.hash
+        ? `<a href="#" data-hash="${tx.hash}">${tx.hash}</a>`
+        : '';
+      row.innerHTML = `<td>${tx.to}</td><td>${tx.amount}</td><td>${tx.date}</td><td>${hashCell}</td>`;
       tbody.appendChild(row);
+    });
+    tbody.querySelectorAll('a[data-hash]').forEach(link => {
+      link.addEventListener('click', ev => {
+        ev.preventDefault();
+        const h = link.getAttribute('data-hash');
+        window.nyano.openExternal(`https://nyanoscan.org/block/${h}`);
+      });
     });
   };
 
@@ -530,7 +540,12 @@ window.addEventListener('DOMContentLoaded', () => {
         const proc = await procResp.json();
         if (proc.hash) {
           status.textContent = `Sent! ${proc.hash}`;
-          const tx = { to, amount: amt, date: new Date().toLocaleString() };
+          const tx = {
+            to,
+            amount: amt,
+            date: new Date().toLocaleString(),
+            hash: proc.hash
+          };
           history.unshift(tx);
           saveHistory();
           renderHistory();

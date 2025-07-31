@@ -258,6 +258,12 @@ th {
   cursor: pointer;
 }
 
+.history a {
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .rpc-settings {
   margin: 20px 0;
 }
