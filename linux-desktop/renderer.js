@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const pages = document.querySelectorAll('.page');
   const sidebar = document.getElementById('sidebar');
   const toggleBtn = document.getElementById('toggle-sidebar');
+  let currentPage = 'wallet';
 
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener('click', () => {
@@ -20,6 +21,14 @@ window.addEventListener('DOMContentLoaded', () => {
       pages.forEach(page => {
         page.classList.toggle('active', page.id === target);
       });
+
+      currentPage = target;
+      if (currentPage === 'wallet') {
+        fetchBalance();
+        fetchNetworkHistory();
+      } else if (currentPage === 'dashboard') {
+        fetchDashboard();
+      }
     });
   });
 
@@ -250,7 +259,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const getRpcUrl = () => (rpcInput ? rpcInput.value.trim() : storedRpc);
 
-  const fetchBalance = async () => {
+  async function fetchBalance() {
     if (!balanceEl) return;
     balanceEl.textContent = '...';
     try {
@@ -272,7 +281,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       balanceEl.textContent = 'error';
     }
-  };
+  }
 
   // Wallet data
   let address = storedSeed
@@ -372,6 +381,10 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (!confirm(`Send ${amt} NYANO to ${to}?`)) {
+        return;
+      }
+
       status.textContent = 'Sending...';
 
       const seed = seedInput.value.trim();
@@ -452,6 +465,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (clearHistoryBtn) {
     clearHistoryBtn.addEventListener('click', () => {
+      if (!confirm('Clear local history?')) return;
       history = [];
       saveHistory();
       renderHistory();
@@ -484,7 +498,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  const fetchNetworkHistory = async () => {
+  async function fetchNetworkHistory() {
     if (!address) return;
     if (networkHistoryTable) {
       const tbody = networkHistoryTable.querySelector('tbody');
@@ -506,7 +520,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       renderNetworkHistory([]);
     }
-  };
+  }
 
   if (refreshNetworkHistoryBtn) {
     refreshNetworkHistoryBtn.addEventListener('click', fetchNetworkHistory);
@@ -717,7 +731,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const peerCountEl = document.getElementById('peer-count');
   const refreshBtn = document.getElementById('refresh-dashboard');
 
-  const fetchDashboard = async () => {
+  async function fetchDashboard() {
     if (priceEl) priceEl.textContent = 'loading...';
     if (networkEl) networkEl.textContent = 'checking...';
     if (blockCountEl) blockCountEl.textContent = '...';
@@ -766,12 +780,24 @@ window.addEventListener('DOMContentLoaded', () => {
       if (blockCountEl) blockCountEl.textContent = '-';
       if (peerCountEl) peerCountEl.textContent = '-';
     }
-  };
+  }
 
   if (refreshBtn) {
     refreshBtn.addEventListener('click', fetchDashboard);
   }
 
   fetchDashboard();
+
+  setInterval(() => {
+    if (currentPage === 'wallet') fetchBalance();
+  }, 60000);
+
+  setInterval(() => {
+    if (currentPage === 'wallet') fetchNetworkHistory();
+  }, 120000);
+
+  setInterval(() => {
+    if (currentPage === 'dashboard') fetchDashboard();
+  }, 60000);
 });
 
