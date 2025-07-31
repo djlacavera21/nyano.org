@@ -12,11 +12,26 @@ async function updateNetworkStatus() {
     });
     if (!resp.ok) throw new Error('network');
     const data = await resp.json();
+    const count = data.count;
     statusEl.textContent = 'online';
-    blockEl.textContent = data.count;
+    blockEl.textContent = count;
+    localStorage.setItem(
+      'network-status',
+      JSON.stringify({ status: 'online', count, ts: Date.now() }),
+    );
   } catch (err) {
     statusEl.textContent = 'offline';
-    blockEl.textContent = '-';
+    const cached = localStorage.getItem('network-status');
+    if (cached) {
+      try {
+        const { count } = JSON.parse(cached);
+        blockEl.textContent = `${count} (cached)`;
+      } catch {
+        blockEl.textContent = '-';
+      }
+    } else {
+      blockEl.textContent = '-';
+    }
   }
 }
 

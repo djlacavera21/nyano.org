@@ -39,6 +39,11 @@ The site registers a small service worker (`sw.js`) to cache static assets so
 that pages remain available when offline. Load the homepage once and it will
 work without a network connection. When offline, requests will show a lightweight offline page if the resource is unavailable. The service worker can be removed via your
 browser settings if needed.
+
+The homepage also caches the latest Nano price and network status in
+`localStorage`. When the APIs are unreachable, the last known values are shown
+with a `(cached)` label so the page still displays useful information even
+without connectivity.
 ## Desktop wallet
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
 The app now includes seed management, network selection on the settings page and a contacts view
