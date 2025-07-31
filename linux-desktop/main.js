@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
@@ -23,7 +23,7 @@ function saveWindowState(win) {
     y: bounds.y,
     width: bounds.width,
     height: bounds.height,
-    isMaximized: win.isMaximized()
+    isMaximized: win.isMaximized(),
   };
   try {
     fs.writeFileSync(getStatePath(), JSON.stringify(state));
@@ -32,16 +32,33 @@ function saveWindowState(win) {
 
 let nodeProcess;
 function startLocalNode() {
-  const nodePath = path.join(__dirname, '..', 'nano-node', 'build', 'nano_node');
+  const nodePath = path.join(
+    __dirname,
+    '..',
+    'nano-node',
+    'build',
+    'nano_node',
+  );
   if (fs.existsSync(nodePath)) {
     nodeProcess = spawn(nodePath, ['--daemon']);
-    nodeProcess.on('error', err => {
+    nodeProcess.on('error', (err) => {
       console.error('Failed to start nano_node', err);
     });
   }
 }
 
-function createWindow () {
+function stopLocalNode() {
+  if (nodeProcess) {
+    nodeProcess.kill();
+    nodeProcess = null;
+  }
+}
+
+function isNodeRunning() {
+  return !!nodeProcess && !nodeProcess.killed;
+}
+
+function createWindow() {
   const state = loadWindowState();
   const win = new BrowserWindow({
     width: state.width || 900,
@@ -49,8 +66,8 @@ function createWindow () {
     x: state.x,
     y: state.y,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, 'preload.js'),
+    },
   });
 
   if (state.isMaximized) win.maximize();
@@ -64,7 +81,7 @@ function createMenu() {
   const template = [
     {
       label: 'File',
-      submenu: [{ role: 'quit' }]
+      submenu: [{ role: 'quit' }],
     },
     {
       label: 'Help',
@@ -75,16 +92,28 @@ function createMenu() {
             dialog.showMessageBox({
               type: 'info',
               message: `${name} ${version}`,
-              buttons: ['OK']
+              buttons: ['OK'],
             });
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ];
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
+
+ipcMain.handle('start-node', () => {
+  if (!isNodeRunning()) startLocalNode();
+  return isNodeRunning();
+});
+
+ipcMain.handle('stop-node', () => {
+  stopLocalNode();
+  return true;
+});
+
+ipcMain.handle('node-status', () => isNodeRunning());
 
 app.whenReady().then(() => {
   startLocalNode();
@@ -101,5 +130,5 @@ app.on('window-all-closed', function () {
 });
 
 app.on('quit', () => {
-  if (nodeProcess) nodeProcess.kill();
+  stopLocalNode();
 });

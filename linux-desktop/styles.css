@@ -298,6 +298,15 @@ th {
   padding: 6px 10px;
 }
 
+.node-settings {
+  margin: 20px 0;
+}
+
+.node-settings button {
+  padding: 6px 10px;
+  margin-right: 4px;
+}
+
 .app-settings {
   margin: 20px 0;
 }

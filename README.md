@@ -57,7 +57,9 @@ npm start
 ```
 
 If a `nano_node` binary exists under `nano-node/build`, the desktop app
-will automatically launch it in daemon mode when started.
+will automatically launch it in daemon mode when started. You can also
+start or stop the embedded node from the **Settings** page using the new
+controls.
 
 ## Running a local Nano node
 You can build and run your own Nano node for use with the desktop wallet.
