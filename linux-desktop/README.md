@@ -53,6 +53,10 @@ the previous bounds on startup. An application menu with **File** and **Help**
 items has also been added. Selecting **About** from the Help menu shows a simple
 dialog displaying the application version.
 
+Account addresses and history entries include quick links to the NyanoScan
+block explorer. Click the external link icon next to your address or any hash in
+the history table to view details in your default browser.
+
 ## Install dependencies
 
 ```
