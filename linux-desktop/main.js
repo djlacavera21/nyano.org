@@ -116,7 +116,6 @@ ipcMain.handle('stop-node', () => {
 ipcMain.handle('node-status', () => isNodeRunning());
 
 app.whenReady().then(() => {
-  startLocalNode();
   createWindow();
   createMenu();
 
