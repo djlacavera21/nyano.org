@@ -90,4 +90,10 @@ npm start
 npm run build
 ```
 
+### Build packages for all platforms
+
+```
+npm run build-all
+```
+
 This is a starting point. Future work can integrate wallet functionality, mining controls, and additional features inspired by platforms like Kraken. The interface uses Font Awesome icons bundled via `npm`.
