@@ -225,6 +225,11 @@ th {
   padding: 2px 6px;
 }
 
+.current-network {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .add-contact {
   margin-bottom: 20px;
 }

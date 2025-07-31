@@ -15,7 +15,8 @@ tracked locally and shown in a simple history table within the wallet view.
 Recent updates introduce basic wallet management. You can generate or import a
 seed on the **Settings** page and select which network (mainnet, testnet, or
 beta) the app should target. The derived Nyano address is displayed in the
-wallet view along with a QR code.
+wallet view along with a QR code. The currently selected network is also shown
+on the wallet page so you always know which environment is active.
 
 You can now manage saved addresses on the **Contacts** page. Stored contacts
 let you quickly fill the send form in the wallet view and are persisted in the

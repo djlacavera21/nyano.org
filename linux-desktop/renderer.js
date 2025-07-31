@@ -69,6 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const setPasswordBtn = document.getElementById('set-password');
   const unlockWalletBtn = document.getElementById('unlock-wallet');
   const networkSelect = document.getElementById('network-select');
+  const currentNetworkEl = document.getElementById('current-network');
   const rpcInput = document.getElementById('rpc-url');
   const saveRpcBtn = document.getElementById('save-rpc');
   const indexInput = document.getElementById('account-index');
@@ -87,6 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   const storedNetwork = localStorage.getItem('network') || 'mainnet';
   if (networkSelect) networkSelect.value = storedNetwork;
+  if (currentNetworkEl) currentNetworkEl.textContent = storedNetwork;
   const storedRpc = localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org';
   if (rpcInput) rpcInput.value = storedRpc;
   const storedIndex = parseInt(localStorage.getItem('accountIndex') || '0', 10);
@@ -306,6 +308,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (networkSelect) {
     networkSelect.addEventListener('change', () => {
       localStorage.setItem('network', networkSelect.value);
+      if (currentNetworkEl) currentNetworkEl.textContent = networkSelect.value;
     });
   }
 
