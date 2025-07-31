@@ -35,6 +35,11 @@ You can also export your wallet seed to a text file or import it from one using
 the new **Export** and **Import** buttons in the Wallet Seed section. This makes
 backing up and restoring your wallet straightforward.
 
+The Settings page now also includes **Export Settings** and **Import Settings**
+options. These let you back up or restore all application data including your
+seed, contacts, history and preferences. A **Reset** button is available to
+clear all saved data if needed.
+
 ## Install dependencies
 
 ```

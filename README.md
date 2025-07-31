@@ -38,6 +38,8 @@ See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and min
 The app now includes seed management, network selection on the settings page and a contacts view
 where addresses can be added, edited or removed. Contacts support import and export
 to a JSON file for easy backup.
+You can also export or import the entire application settings from the Settings
+page or reset all saved data.
 
 ```
 cd linux-desktop

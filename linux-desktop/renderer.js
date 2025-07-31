@@ -62,6 +62,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const indexInput = document.getElementById('account-index');
   const saveIndexBtn = document.getElementById('save-account-index');
   const currentIndexEl = document.getElementById('current-index');
+  const exportSettingsBtn = document.getElementById('export-settings');
+  const importSettingsBtn = document.getElementById('import-settings');
+  const resetSettingsBtn = document.getElementById('reset-settings');
+  const settingsFileInput = document.getElementById('settings-file');
 
   const storedSeed = localStorage.getItem('seed') || '';
   if (seedInput) seedInput.value = storedSeed;
@@ -143,6 +147,82 @@ window.addEventListener('DOMContentLoaded', () => {
       seedFileInput.value = '';
     });
   }
+
+  const exportSettings = () => {
+    const data = {
+      seed: localStorage.getItem('seed') || '',
+      network: localStorage.getItem('network') || 'mainnet',
+      rpcUrl: localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org',
+      accountIndex: parseInt(localStorage.getItem('accountIndex') || '0', 10),
+      contacts: JSON.parse(localStorage.getItem('contacts') || '[]'),
+      history: JSON.parse(localStorage.getItem('history') || '[]')
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nyano-settings.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importSettings = files => {
+    const file = files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (data.seed !== undefined) {
+          localStorage.setItem('seed', data.seed);
+          if (seedInput) seedInput.value = data.seed;
+        }
+        if (data.network) {
+          localStorage.setItem('network', data.network);
+          if (networkSelect) networkSelect.value = data.network;
+        }
+        if (data.rpcUrl) {
+          localStorage.setItem('rpcUrl', data.rpcUrl);
+          if (rpcInput) rpcInput.value = data.rpcUrl;
+        }
+        if (typeof data.accountIndex === 'number') {
+          accountIndex = data.accountIndex;
+          localStorage.setItem('accountIndex', accountIndex.toString());
+          if (indexInput) indexInput.value = accountIndex;
+        }
+        if (Array.isArray(data.contacts)) {
+          contacts = data.contacts;
+          saveContacts();
+          renderContacts();
+        }
+        if (Array.isArray(data.history)) {
+          history = data.history;
+          saveHistory();
+          renderHistory();
+        }
+        updateAddress();
+      } catch {}
+    };
+    reader.readAsText(file);
+  };
+
+  const resetSettings = () => {
+    localStorage.clear();
+    if (seedInput) seedInput.value = '';
+    if (networkSelect) networkSelect.value = 'mainnet';
+    if (rpcInput) rpcInput.value = 'https://rpc.nyano.org';
+    accountIndex = 0;
+    if (indexInput) indexInput.value = '0';
+    contacts = [];
+    history = [];
+    saveContacts();
+    saveHistory();
+    renderContacts();
+    renderHistory();
+    updateAddress();
+  };
 
   if (networkSelect) {
     networkSelect.addEventListener('change', () => {
@@ -483,6 +563,24 @@ window.addEventListener('DOMContentLoaded', () => {
     importFileInput.addEventListener('change', e => {
       importContacts(e.target.files);
       importFileInput.value = '';
+    });
+  }
+
+  if (exportSettingsBtn) {
+    exportSettingsBtn.addEventListener('click', exportSettings);
+  }
+
+  if (importSettingsBtn && settingsFileInput) {
+    importSettingsBtn.addEventListener('click', () => settingsFileInput.click());
+    settingsFileInput.addEventListener('change', e => {
+      importSettings(e.target.files);
+      settingsFileInput.value = '';
+    });
+  }
+
+  if (resetSettingsBtn) {
+    resetSettingsBtn.addEventListener('click', () => {
+      if (confirm('Reset all data?')) resetSettings();
     });
   }
 
