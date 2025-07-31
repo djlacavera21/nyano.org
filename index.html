@@ -74,6 +74,7 @@
           supported wallets as well as exchanges allowing you to swap it from
           your local traditional currency.
         </p>
+        <p>Current Nano price: <span id="nano-price">-</span> USD</p>
       </div>
     </div>
 
@@ -87,6 +88,7 @@
       defer
       src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"
     ></script>
+    <script defer src="js/price.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
