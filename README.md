@@ -55,3 +55,23 @@ cd linux-desktop
 npm install
 npm start
 ```
+
+## Running a local Nano node
+You can build and run your own Nano node for use with the desktop wallet.
+A helper script is provided under `scripts/setup-nano-node.sh`.
+Run the following commands from the repository root:
+
+```bash
+./scripts/setup-nano-node.sh
+```
+
+This will clone the official node source from [djlacavera21/nano-node](https://github.com/djlacavera21/nano-node.git),
+initialise submodules and compile the `nano_node` binary in `nano-node/build`.
+Start the node with:
+
+```bash
+./nano-node/build/nano_node --daemon
+```
+
+Set the RPC endpoint in the desktop wallet settings to `http://localhost:7076` to
+interact with your local node.
