@@ -3,38 +3,50 @@ This file includes a list of NYANO related projects.
 If you are interested in including a link on nyano.org, please list it here first.
 
 # List of Nyano projects
+
 ## Official sites
-* https://nyano.org (official site)
-* https://nyanoscan.org (official block explorer, https://github.com/jelofsson/nyanoscan)
+
+- https://nyano.org (official site)
+- https://nyanoscan.org (official block explorer, https://github.com/jelofsson/nyanoscan)
 
 ## Wallets
-* https://github.com/JeanOUINA/Nyault (Nyault)
-* https://github.com/MajorChump/nyano-natrium-wallet (Nyano-Natrium)
+
+- https://github.com/JeanOUINA/Nyault (Nyault)
+- https://github.com/MajorChump/nyano-natrium-wallet (Nyano-Natrium)
 
 ## Faucets
-* https://freenyanofaucet.com/ (Nyano faucet)
+
+- https://freenyanofaucet.com/ (Nyano faucet)
 
 ## Tipbots
-* https://github.com/gurghet/NyanoTipBot (Twitter Tipbot)
+
+- https://github.com/gurghet/NyanoTipBot (Twitter Tipbot)
 
 ## Communication
-* https://discord.gg/VRGFGWjG (Discord)
+
+- https://discord.gg/VRGFGWjG (Discord)
 
 ## Games
-* https://apps.apple.com/us/app/nyano-meow/id1593204477?l=nb (Nyano Meow)
+
+- https://apps.apple.com/us/app/nyano-meow/id1593204477?l=nb (Nyano Meow)
 
 ## Other
-* https://cdn.discordapp.com/attachments/903341738054258751/903987464471994418/nyano_brand_guidelines.pdf (Nyano Brand Guidelines)
-* https://nyanomarketcap.com (Nyano Price & Marketcap Tracker)
+
+- https://cdn.discordapp.com/attachments/903341738054258751/903987464471994418/nyano_brand_guidelines.pdf (Nyano Brand Guidelines)
+- https://nyanomarketcap.com (Nyano Price & Marketcap Tracker)
 
 # nyano.org
+
 ## dependencies
-* font-awesome
+
+- font-awesome
 
 ## installation
+
 npm install
 
 ## Offline access
+
 The site registers a small service worker (`sw.js`) to cache static assets so
 that pages remain available when offline. Load the homepage once and it will
 work without a network connection. When offline, requests will show a lightweight offline page if the resource is unavailable. The service worker can be removed via your
@@ -47,7 +59,9 @@ The homepage also caches the latest Nano price and network status in
 `localStorage`. When the APIs are unreachable, the last known values are shown
 with a `(cached)` label so the page still displays useful information even
 without connectivity.
+
 ## Desktop wallet
+
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
 The app now includes seed management, network selection on the settings page and a contacts view
 where addresses can be added, edited or removed. Contacts support import and export
@@ -82,6 +96,7 @@ start or stop the embedded node from the **Settings** page using the new
 controls.
 
 ## Running a local Nano node
+
 You can build and run your own Nano node for use with the desktop wallet.
 A helper script is provided under `scripts/setup-nano-node.sh`.
 Run the following commands from the repository root:
@@ -108,6 +123,7 @@ Set the RPC endpoint in the desktop wallet settings to `http://localhost:7076` t
 interact with your local node.
 
 ## Updating the local node
+
 If the `nano-node` source was built previously, you can update to the latest
 version and rebuild the binary using the helper script:
 
@@ -119,19 +135,39 @@ The script fetches the newest changes from the `nano-node` repository and
 recompiles the daemon in `nano-node/build`.
 
 ## Continuous Integration
+
 A GitHub Actions workflow automatically runs ESLint on every push and pull
 request. This helps catch coding issues before changes are merged.
 
 ## Generating a wallet
+
 You can generate a new Nano wallet from the command line using:
 
 ```bash
 npm run generate-wallet
 ```
 
-The command prints the seed and address to the console. Provide a file path to save the wallet as JSON:
+The command prints the seed, mnemonic and address to the console. Provide a file path to save the wallet as JSON:
 
 ```bash
 npm run generate-wallet -- wallet.json
 ```
 
+You can also specify options:
+
+```
+npm run generate-wallet -- --index 2 --prefix nyano_
+npm run generate-wallet -- --seed <hex_seed>
+npm run generate-wallet -- --mnemonic "word list..."
+```
+
+Run the wallet API server with:
+
+```
+npm run wallet-api
+```
+
+It exposes two endpoints:
+
+- `GET /generate` – returns a new wallet
+- `POST /derive` – derive from a provided seed or mnemonic
