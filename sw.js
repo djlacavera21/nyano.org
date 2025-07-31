@@ -1,7 +1,9 @@
-const CACHE_NAME = 'nyano-site-v1';
+const CACHE_NAME = 'nyano-site-v2';
+const OFFLINE_URL = '/offline.html';
 const ASSETS = [
   '/',
   '/index.html',
+  OFFLINE_URL,
   '/css/styles.css',
   '/img/nyano2.png',
   '/favicon-32x32.png',
@@ -26,6 +28,14 @@ self.addEventListener('activate', (event) => {
 });
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((res) => res || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request).then((res) => res || caches.match(OFFLINE_URL))
+      )
   );
 });
