@@ -73,5 +73,7 @@ Start the node with:
 ./nano-node/build/nano_node --daemon
 ```
 
-Set the RPC endpoint in the desktop wallet settings to `http://localhost:7076` to
-interact with your local node.
+Once the node is built, launching the desktop wallet will also automatically
+start the daemon if the binary is found in `nano-node/build` and shut it down
+when you exit the wallet. Set the RPC endpoint in the desktop wallet settings to
+`http://localhost:7076` to interact with your local node.
