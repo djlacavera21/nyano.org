@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const fs = require('fs');
 const path = require('path');
 const {
   generateWallet,
@@ -9,9 +8,12 @@ const {
   deriveSecretKeyFromSeed,
   derivePublicKeyFromSeed,
   encryptSeed,
+  saveWalletToFile,
+  loadWalletFromFile,
 } = require('../lib/wallet');
 
 let outPath;
+let loadPath;
 let index = 0;
 let prefix = 'nano_';
 let count = 1;
@@ -36,6 +38,9 @@ for (let i = 0; i < args.length; i++) {
     case '--keys':
       showKeys = true;
       break;
+    case '--load':
+      loadPath = args[++i];
+      break;
     case '--seed':
       seed = args[++i];
       break;
@@ -55,7 +60,9 @@ for (let i = 0; i < args.length; i++) {
 
 async function main() {
   let wallet;
-  if (seed) {
+  if (loadPath) {
+    wallet = loadWalletFromFile(loadPath, password);
+  } else if (seed) {
     wallet = deriveWalletFromSeed(seed, index, prefix);
   } else if (mnemonic) {
     wallet = deriveWalletFromMnemonic(mnemonic, index, prefix, passphrase);
@@ -67,12 +74,7 @@ async function main() {
 
   if (outPath) {
     const file = path.resolve(outPath);
-    const data = { ...wallet, addresses };
-    if (password) {
-      data.encryptedSeed = encryptSeed(wallet.seed, password);
-      delete data.seed;
-    }
-    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+    saveWalletToFile({ ...wallet, addresses }, file, password);
     console.log(`Wallet written to ${file}`);
   } else {
     if (password) {

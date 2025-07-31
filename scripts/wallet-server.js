@@ -15,6 +15,8 @@ const {
   validateSecretKey,
   encryptSeed,
   decryptSeed,
+  saveWalletToFile,
+  loadWalletFromFile,
 } = require('../lib/wallet');
 
 const app = express();
@@ -100,6 +102,32 @@ app.post('/decrypt', (req, res) => {
     res.json({ seed });
   } catch {
     res.status(400).json({ error: 'decryption failed' });
+  }
+});
+
+app.post('/save', (req, res) => {
+  const { wallet, path, password } = req.body;
+  if (!wallet || !path) {
+    return res.status(400).json({ error: 'wallet and path required' });
+  }
+  try {
+    saveWalletToFile(wallet, path, password);
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: 'failed to save wallet' });
+  }
+});
+
+app.post('/load', (req, res) => {
+  const { path, password } = req.body;
+  if (!path) {
+    return res.status(400).json({ error: 'path required' });
+  }
+  try {
+    const wallet = loadWalletFromFile(path, password);
+    res.json(wallet);
+  } catch {
+    res.status(500).json({ error: 'failed to load wallet' });
   }
 });
 
