@@ -51,7 +51,10 @@
             <i class="fas fa-external-link-alt"></i>
           </button>
         </div>
-        <canvas id="address-qr" width="128" height="128"></canvas>
+        <canvas id="address-qr" width="192" height="192"></canvas>
+        <button id="save-address-qr" title="Save QR">
+          <i class="fas fa-download"></i>
+        </button>
 
         <div class="current-network">
           Network: <span id="current-network">mainnet</span>
@@ -65,6 +68,7 @@
           <label
             >Amount <input type="number" id="send-amount" min="0" step="any"
           /></label>
+          <button id="send-max" title="Use balance">Max</button>
           <button id="send-button">Send</button>
           <div id="tx-status" class="status"></div>
         </div>
