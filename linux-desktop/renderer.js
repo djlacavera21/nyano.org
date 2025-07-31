@@ -303,6 +303,7 @@ window.addEventListener('DOMContentLoaded', () => {
   else fetchBalance();
 
   const copyBtn = document.getElementById('copy-address');
+  const viewAddrBtn = document.getElementById('view-address');
   const refreshBalanceBtn = document.getElementById('refresh-balance');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
@@ -311,6 +312,14 @@ window.addEventListener('DOMContentLoaded', () => {
         copyBtn.textContent = 'Copied!';
         setTimeout(() => (copyBtn.textContent = ''), 1000);
       });
+    });
+  }
+  if (viewAddrBtn) {
+    viewAddrBtn.addEventListener('click', () => {
+      updateAddress();
+      window.nyano.openExternal(
+        `https://nyanoscan.org/account/${address}`
+      );
     });
   }
   if (refreshBalanceBtn) {
@@ -493,8 +502,15 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     entries.forEach(e => {
       const row = document.createElement('tr');
-      row.innerHTML = `<td>${e.type}</td><td>${e.amount}</td><td>${e.hash}</td>`;
+      row.innerHTML = `<td>${e.type}</td><td>${e.amount}</td><td><a href="#" data-hash="${e.hash}">${e.hash}</a></td>`;
       tbody.appendChild(row);
+    });
+    tbody.querySelectorAll('a[data-hash]').forEach(link => {
+      link.addEventListener('click', ev => {
+        ev.preventDefault();
+        const h = link.getAttribute('data-hash');
+        window.nyano.openExternal(`https://nyanoscan.org/block/${h}`);
+      });
     });
   };
 

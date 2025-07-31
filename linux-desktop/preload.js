@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron');
+const { contextBridge, shell } = require('electron');
 const { version } = require('./package.json');
 const {
   generateSeed,
@@ -20,5 +20,6 @@ contextBridge.exposeInMainWorld('nyano', {
   derivePublicKey,
   createBlock,
   convert,
-  Unit
+  Unit,
+  openExternal: url => shell.openExternal(url)
 });
