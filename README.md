@@ -36,7 +36,8 @@ npm install
 ## Desktop wallet
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
 The app now includes seed management, network selection on the settings page and a contacts view
-where addresses can be added, edited or removed.
+where addresses can be added, edited or removed. Contacts support import and export
+to a JSON file for easy backup.
 
 ```
 cd linux-desktop

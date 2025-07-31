@@ -256,6 +256,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // Contacts
   const contactsTable = document.getElementById('contacts-table');
   const addContactBtn = document.getElementById('add-contact');
+  const importContactsBtn = document.getElementById('import-contacts');
+  const exportContactsBtn = document.getElementById('export-contacts');
+  const importFileInput = document.getElementById('import-file');
   const contactNameInput = document.getElementById('contact-name');
   const contactAddressInput = document.getElementById('contact-address');
   let contacts = [];
@@ -333,6 +336,52 @@ window.addEventListener('DOMContentLoaded', () => {
       renderContacts();
       contactNameInput.value = '';
       contactAddressInput.value = '';
+    });
+  }
+
+  const exportContacts = () => {
+    if (!contacts.length) return;
+    const blob = new Blob([JSON.stringify(contacts, null, 2)], {
+      type: 'application/json'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'contacts.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importContacts = files => {
+    const file = files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (Array.isArray(data)) {
+          data.forEach(c => {
+            if (c.name && c.address) {
+              contacts.push({ name: c.name, address: c.address });
+            }
+          });
+          saveContacts();
+          renderContacts();
+        }
+      } catch {}
+    };
+    reader.readAsText(file);
+  };
+
+  if (exportContactsBtn) {
+    exportContactsBtn.addEventListener('click', exportContacts);
+  }
+
+  if (importContactsBtn && importFileInput) {
+    importContactsBtn.addEventListener('click', () => importFileInput.click());
+    importFileInput.addEventListener('change', e => {
+      importContacts(e.target.files);
+      importFileInput.value = '';
     });
   }
 
