@@ -1,54 +1,98 @@
 <!doctype html>
 
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>nyano.org</title>
-  <meta name="description" content="Nyano: The secret meme coin inside Nano">
-  <!-- <meta name="author" content=""> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <title>nyano.org</title>
+    <meta
+      name="description"
+      content="Nyano: The secret meme coin inside Nano"
+    />
+    <!-- <meta name="author" content=""> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta property="og:title" content="nyano.org">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://nyano.org">
-  <meta property="og:description" content="Nyano: The secret meme coin inside Nano">
-  <meta property="og:image" content="https://nyano.org/img/og.png">
+    <meta property="og:title" content="nyano.org" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nyano.org" />
+    <meta
+      property="og:description"
+      content="Nyano: The secret meme coin inside Nano"
+    />
+    <meta property="og:image" content="https://nyano.org/img/og.png" />
 
-  <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-    
-  <link rel="stylesheet" href="css/styles.css">
-  
-</head>
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
 
-<body>
-  <div id="holding">
-        <img src="img/nyano2.png" alt="nyano cat" width="300" />
-        <h2 class="nyano">nyano</h2>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.16.16/dist/css/uikit.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.16/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.16/dist/js/uikit-icons.min.js"></script>
 
-        <div class="wallets">
-            <p>Nyano is a meme about the famous Nyan Cat and the glorious cryptocurrency Nano.</p>
-            <p>Web & mobile wallets were created to show 1 nyano = 10^-6 XNO (Nano's canonical denomination) to let people play with the feeless digital currency in small amounts, but are now abandoned. You can find the original codebase and some useful references <a href="https://github.com/rickyhewitt/nyano.org">here</a>. </p>
-            <p>You can still use the Nano payment network, which is stronger than ever, just by adding some zeros after the decimal separator 😊 </p>
-            <p>Refer to <a href="https://nano.org">nano.org</a> to find the currently supported wallets as well as exchanges allowing you to swap it from your local traditional currency.</p>
-        </div>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
+  <body>
+    <nav class="uk-navbar-container" uk-navbar>
+      <div class="uk-navbar-left">
+        <a href="#" class="uk-navbar-item uk-logo">nyano</a>
+      </div>
+      <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+          <li><a href="https://github.com/rickyhewitt/nyano.org">GitHub</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div id="holding" class="uk-section">
+      <img src="img/nyano2.png" alt="nyano cat" width="300" />
+      <h2 class="nyano">nyano</h2>
+
+      <div class="wallets">
+        <p>
+          Nyano is a meme about the famous Nyan Cat and the glorious
+          cryptocurrency Nano.
+        </p>
+        <p>
+          Web & mobile wallets were created to show 1 nyano = 10^-6 XNO (Nano's
+          canonical denomination) to let people play with the feeless digital
+          currency in small amounts, but are now abandoned. You can find the
+          original codebase and some useful references
+          <a href="https://github.com/rickyhewitt/nyano.org">here</a>.
+        </p>
+        <p>
+          You can still use the Nano payment network, which is stronger than
+          ever, just by adding some zeros after the decimal separator 😊
+        </p>
+        <p>
+          Refer to <a href="https://nano.org">nano.org</a> to find the currently
+          supported wallets as well as exchanges allowing you to swap it from
+          your local traditional currency.
+        </p>
+      </div>
     </div>
 
     <div class="copyright">
-        nyano.org
-        <a href="https://github.com/rickyhewitt/nyano.org">View on Github</a>
+      nyano.org
+      <a href="https://github.com/rickyhewitt/nyano.org">View on Github</a>
     </div>
-  <!-- <script src="js/scripts.js"></script> -->
+    <!-- <script src="js/scripts.js"></script> -->
 
-  <script defer src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"></script>
-  <!-- Cloudflare Web Analytics -->
-      <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1e183b8ecced4e6bbf652019542b7fbf"}'></script>
-  <!-- End Cloudflare Web Analytics -->
-</body>
+    <script
+      defer
+      src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"
+    ></script>
+    <!-- Cloudflare Web Analytics -->
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "1e183b8ecced4e6bbf652019542b7fbf"}'
+    ></script>
+    <!-- End Cloudflare Web Analytics -->
+  </body>
 </html>
