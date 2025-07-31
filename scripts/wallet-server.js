@@ -5,6 +5,14 @@ const {
   deriveWalletFromSeed,
   deriveWalletFromMnemonic,
   deriveAddresses,
+  deriveSecretKeyFromSeed,
+  derivePublicKeyFromSeed,
+  deriveSecretKeyFromMnemonic,
+  derivePublicKeyFromMnemonic,
+  validateSeed,
+  validateMnemonic,
+  validateAddress,
+  validateSecretKey,
 } = require('../lib/wallet');
 
 const app = express();
@@ -42,6 +50,37 @@ app.post('/derive', (req, res) => {
   } catch (err) {
     res.status(400).json({ error: 'invalid data' });
   }
+});
+
+app.post('/keys', (req, res) => {
+  const { seed, mnemonic } = req.body;
+  const index = req.body.index ? parseInt(req.body.index, 10) : 0;
+  try {
+    let secretKey;
+    let publicKey;
+    if (seed) {
+      secretKey = deriveSecretKeyFromSeed(seed, index);
+      publicKey = derivePublicKeyFromSeed(seed, index);
+    } else if (mnemonic) {
+      secretKey = deriveSecretKeyFromMnemonic(mnemonic, index);
+      publicKey = derivePublicKeyFromMnemonic(mnemonic, index);
+    } else {
+      return res.status(400).json({ error: 'seed or mnemonic required' });
+    }
+    res.json({ secretKey, publicKey });
+  } catch {
+    res.status(400).json({ error: 'invalid data' });
+  }
+});
+
+app.post('/validate', (req, res) => {
+  const { seed, mnemonic, address, secretKey } = req.body;
+  res.json({
+    seed: seed ? validateSeed(seed) : false,
+    mnemonic: mnemonic ? validateMnemonic(mnemonic) : false,
+    address: address ? validateAddress(address) : false,
+    secretKey: secretKey ? validateSecretKey(secretKey) : false,
+  });
 });
 
 const port = process.env.PORT || 3000;
