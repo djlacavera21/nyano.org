@@ -1,6 +1,6 @@
 {
   "name": "nyano-desktop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Nyano desktop wallet and miner",
   "main": "main.js",
   "scripts": {
