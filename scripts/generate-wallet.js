@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-const { generateSeed, deriveAddress } = require('nanocurrency');
 const fs = require('fs');
 const path = require('path');
+const { generateWallet } = require('../lib/wallet');
 
-const seed = generateSeed();
-const address = deriveAddress(seed, 0, { prefix: 'nano_' });
-
-const data = { seed, address };
 const outPath = process.argv[2];
+const index = process.argv[3] ? parseInt(process.argv[3], 10) : 0;
+
+const { seed, mnemonic, address } = generateWallet(index);
+
+const data = { seed, mnemonic, address };
 
 if (outPath) {
   const file = path.resolve(outPath);
@@ -15,5 +16,6 @@ if (outPath) {
   console.log(`Wallet written to ${file}`);
 } else {
   console.log(`Seed: ${seed}`);
+  console.log(`Mnemonic: ${mnemonic}`);
   console.log(`Address: ${address}`);
 }
