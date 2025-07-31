@@ -18,6 +18,10 @@ You can now manage saved addresses on the **Contacts** page. Stored contacts
 let you quickly fill the send form in the wallet view and are persisted in the
 browser's local storage.
 
+The settings page also lets you configure the RPC endpoint used for network
+requests. By default the application targets `https://rpc.nyano.org` but you
+can update the URL to point to any compatible node.
+
 ## Install dependencies
 
 ```
@@ -29,6 +33,12 @@ npm install
 
 ```
 npm start
+```
+
+## Build a package
+
+```bash
+npm run build
 ```
 
 This is a starting point. Future work can integrate wallet functionality, mining controls, and additional features inspired by platforms like Kraken. The interface uses Font Awesome icons bundled via `npm`.

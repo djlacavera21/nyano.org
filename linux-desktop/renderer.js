@@ -46,11 +46,15 @@ window.addEventListener('DOMContentLoaded', () => {
   const generateSeedBtn = document.getElementById('generate-seed');
   const saveSeedBtn = document.getElementById('save-seed');
   const networkSelect = document.getElementById('network-select');
+  const rpcInput = document.getElementById('rpc-url');
+  const saveRpcBtn = document.getElementById('save-rpc');
 
   const storedSeed = localStorage.getItem('seed') || '';
   if (seedInput) seedInput.value = storedSeed;
   const storedNetwork = localStorage.getItem('network') || 'mainnet';
   if (networkSelect) networkSelect.value = storedNetwork;
+  const storedRpc = localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org';
+  if (rpcInput) rpcInput.value = storedRpc;
 
   const updateAddress = () => {
     if (!seedInput) return;
@@ -88,6 +92,14 @@ window.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('network', networkSelect.value);
     });
   }
+
+  if (saveRpcBtn && rpcInput) {
+    saveRpcBtn.addEventListener('click', () => {
+      localStorage.setItem('rpcUrl', rpcInput.value.trim());
+    });
+  }
+
+  const getRpcUrl = () => (rpcInput ? rpcInput.value.trim() : storedRpc);
 
   // Wallet data
   let address = storedSeed ? window.nyano.deriveAddress(storedSeed, 0) : "nyano_11111111111111111111111111111111111111111111111111111111111";
@@ -317,9 +329,18 @@ window.addEventListener('DOMContentLoaded', () => {
       const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd');
       const data = await resp.json();
       if (priceEl) priceEl.textContent = data.nano.usd;
-      if (networkEl) networkEl.textContent = 'online';
     } catch (err) {
       if (priceEl) priceEl.textContent = 'error';
+    }
+    try {
+      const rpcResp = await fetch(getRpcUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'version' })
+      });
+      await rpcResp.json();
+      if (networkEl) networkEl.textContent = 'online';
+    } catch (err) {
       if (networkEl) networkEl.textContent = 'offline';
     }
   };
