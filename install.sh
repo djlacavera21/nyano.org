@@ -22,6 +22,9 @@ cd "$APP_DIR"
 # install dependencies
 npm install
 
+# build nano node if missing
+"$SCRIPT_DIR/scripts/setup-nano-node.sh"
+
 # build packaged application
 npm run build
 
