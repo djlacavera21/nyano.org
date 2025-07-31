@@ -8,6 +8,7 @@ const {
   deriveAddresses,
   deriveSecretKeyFromSeed,
   derivePublicKeyFromSeed,
+  encryptSeed,
 } = require('../lib/wallet');
 
 let outPath;
@@ -17,6 +18,7 @@ let count = 1;
 let showKeys = false;
 let seed;
 let mnemonic;
+let password;
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -39,6 +41,9 @@ for (let i = 0; i < args.length; i++) {
     case '--mnemonic':
       mnemonic = args[++i];
       break;
+    case '--password':
+      password = args[++i];
+      break;
     default:
       if (!outPath) outPath = args[i];
   }
@@ -58,10 +63,19 @@ async function main() {
 
   if (outPath) {
     const file = path.resolve(outPath);
-    fs.writeFileSync(file, JSON.stringify({ ...wallet, addresses }, null, 2));
+    const data = { ...wallet, addresses };
+    if (password) {
+      data.encryptedSeed = encryptSeed(wallet.seed, password);
+      delete data.seed;
+    }
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
     console.log(`Wallet written to ${file}`);
   } else {
-    console.log(`Seed: ${wallet.seed}`);
+    if (password) {
+      console.log(`Encrypted Seed: ${encryptSeed(wallet.seed, password)}`);
+    } else {
+      console.log(`Seed: ${wallet.seed}`);
+    }
     console.log(`Mnemonic: ${wallet.mnemonic}`);
     console.log(`Addresses:`);
     addresses.forEach((addr, i) => {

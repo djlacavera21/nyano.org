@@ -20,6 +20,10 @@ async function run() {
   const addresses = wallet.deriveAddresses(w.seed, 2, 0, 'nano_');
   assert.strictEqual(addresses.length, 2);
 
+  const encrypted = wallet.encryptSeed(w.seed, 'pass');
+  const decrypted = wallet.decryptSeed(encrypted, 'pass');
+  assert.strictEqual(decrypted, w.seed);
+
   console.log('All wallet tests passed');
 }
 
