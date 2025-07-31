@@ -6,6 +6,7 @@ const {
   deriveWalletFromSeed,
   deriveWalletFromMnemonic,
   deriveAddresses,
+  deriveAddressRecords,
 } = require('../lib/wallet');
 
 let outPath;
@@ -14,6 +15,7 @@ let prefix = 'nano_';
 let count = 1;
 let seed;
 let mnemonic;
+let includeKeys = false;
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -33,6 +35,9 @@ for (let i = 0; i < args.length; i++) {
     case '--mnemonic':
       mnemonic = args[++i];
       break;
+    case '--include-keys':
+      includeKeys = true;
+      break;
     default:
       if (!outPath) outPath = args[i];
   }
@@ -48,7 +53,9 @@ async function main() {
     wallet = await generateWallet(index, prefix);
   }
 
-  const addresses = deriveAddresses(wallet.seed, count, index, prefix);
+  const addresses = includeKeys
+    ? deriveAddressRecords(wallet.seed, count, index, prefix)
+    : deriveAddresses(wallet.seed, count, index, prefix);
 
   if (outPath) {
     const file = path.resolve(outPath);
@@ -58,9 +65,17 @@ async function main() {
     console.log(`Seed: ${wallet.seed}`);
     console.log(`Mnemonic: ${wallet.mnemonic}`);
     console.log(`Addresses:`);
-    addresses.forEach((addr, i) => {
-      console.log(`  [${index + i}] ${addr}`);
-    });
+    if (includeKeys) {
+      addresses.forEach((rec) => {
+        console.log(`  [${rec.index}] ${rec.address}`);
+        console.log(`    Public Key: ${rec.publicKey}`);
+        console.log(`    Secret Key: ${rec.secretKey}`);
+      });
+    } else {
+      addresses.forEach((addr, i) => {
+        console.log(`  [${index + i}] ${addr}`);
+      });
+    }
   }
 }
 
