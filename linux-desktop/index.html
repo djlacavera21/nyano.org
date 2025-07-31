@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -27,12 +27,8 @@
         <li data-page="dashboard">
           <i class="fas fa-chart-line"></i> Dashboard
         </li>
-        <li data-page="miner">
-          <i class="fas fa-coins"></i> Miner
-        </li>
-        <li data-page="settings">
-          <i class="fas fa-cog"></i> Settings
-        </li>
+        <li data-page="miner"><i class="fas fa-coins"></i> Miner</li>
+        <li data-page="settings"><i class="fas fa-cog"></i> Settings</li>
       </ul>
     </nav>
     <main id="content">
@@ -40,23 +36,35 @@
         <h2>Wallet</h2>
         <div class="balance">
           Balance: <span id="balance">0</span> NYANO
-          <button id="refresh-balance" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+          <button id="refresh-balance" title="Refresh">
+            <i class="fas fa-sync-alt"></i>
+          </button>
         </div>
 
         <div class="wallet-address">
           <label>Address (index: <span id="current-index">0</span>)</label>
           <input type="text" id="address" readonly />
-          <button id="copy-address" title="Copy"><i class="fas fa-copy"></i></button>
-          <button id="view-address" title="Open in explorer"><i class="fas fa-external-link-alt"></i></button>
+          <button id="copy-address" title="Copy">
+            <i class="fas fa-copy"></i>
+          </button>
+          <button id="view-address" title="Open in explorer">
+            <i class="fas fa-external-link-alt"></i>
+          </button>
         </div>
         <canvas id="address-qr" width="128" height="128"></canvas>
 
-        <div class="current-network">Network: <span id="current-network">mainnet</span></div>
+        <div class="current-network">
+          Network: <span id="current-network">mainnet</span>
+        </div>
 
         <div class="send-form">
           <h3>Send</h3>
-          <label>To <input type="text" id="send-to" placeholder="Nyano address" /></label>
-          <label>Amount <input type="number" id="send-amount" min="0" step="any" /></label>
+          <label
+            >To <input type="text" id="send-to" placeholder="Nyano address"
+          /></label>
+          <label
+            >Amount <input type="number" id="send-amount" min="0" step="any"
+          /></label>
           <button id="send-button">Send</button>
           <div id="tx-status" class="status"></div>
         </div>
@@ -102,11 +110,21 @@
           <button id="add-contact">Add</button>
           <button id="import-contacts">Import</button>
           <button id="export-contacts">Export</button>
-          <input type="file" id="import-file" accept="application/json" hidden />
+          <input
+            type="file"
+            id="import-file"
+            accept="application/json"
+            hidden
+          />
         </div>
+        <input type="text" id="contact-search" placeholder="Search contacts" />
         <table id="contacts-table">
           <thead>
-            <tr><th>Name</th><th>Address</th><th></th></tr>
+            <tr>
+              <th>Name</th>
+              <th>Address</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -114,13 +132,21 @@
 
       <section id="dashboard" class="page">
         <h2>Dashboard</h2>
-        <div class="price">NANO Price: <span id="nano-price">loading...</span> USD</div>
-        <div class="network">Network Status: <span id="network-status">checking...</span></div>
+        <div class="price">
+          NANO Price: <span id="nano-price">loading...</span> USD
+        </div>
+        <div class="network">
+          Network Status: <span id="network-status">checking...</span>
+        </div>
         <div class="block-count">Blocks: <span id="block-count">-</span></div>
         <div class="peer-count">Peers: <span id="peer-count">-</span></div>
         <div class="sync-progress">Sync: <span id="sync-progress">-</span></div>
-        <div class="rpc-latency">RPC Latency: <span id="rpc-latency">-</span></div>
-        <div class="node-version">Node Version: <span id="node-version">-</span></div>
+        <div class="rpc-latency">
+          RPC Latency: <span id="rpc-latency">-</span>
+        </div>
+        <div class="node-version">
+          Node Version: <span id="node-version">-</span>
+        </div>
         <button id="refresh-dashboard">Refresh</button>
       </section>
 
@@ -180,7 +206,12 @@
           <button id="export-settings">Export Settings</button>
           <button id="import-settings">Import Settings</button>
           <button id="reset-settings">Reset</button>
-          <input type="file" id="settings-file" accept="application/json" hidden />
+          <input
+            type="file"
+            id="settings-file"
+            accept="application/json"
+            hidden
+          />
         </div>
         <p>Platform: <span id="platform"></span></p>
         <p>Version: <span id="version"></span></p>

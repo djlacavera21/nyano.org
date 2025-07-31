@@ -1,28 +1,52 @@
+/* global QRCode */
 window.addEventListener('DOMContentLoaded', () => {
   const sidebarItems = document.querySelectorAll('#sidebar li');
   const pages = document.querySelectorAll('.page');
   const sidebar = document.getElementById('sidebar');
   const toggleBtn = document.getElementById('toggle-sidebar');
-  let currentPage = 'wallet';
+  let currentPage = localStorage.getItem('currentPage') || 'wallet';
+  const collapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+  if (collapsed && sidebar) sidebar.classList.add('collapsed');
+
+  sidebarItems.forEach((item) => {
+    item.classList.toggle(
+      'active',
+      item.getAttribute('data-page') === currentPage,
+    );
+  });
+  pages.forEach((page) => {
+    page.classList.toggle('active', page.id === currentPage);
+  });
+  if (currentPage === 'wallet') {
+    fetchBalance();
+    fetchNetworkHistory();
+  } else if (currentPage === 'dashboard') {
+    fetchDashboard();
+  }
 
   if (toggleBtn && sidebar) {
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('collapsed');
+      localStorage.setItem(
+        'sidebarCollapsed',
+        sidebar.classList.contains('collapsed').toString(),
+      );
     });
   }
 
-  sidebarItems.forEach(item => {
+  sidebarItems.forEach((item) => {
     item.addEventListener('click', () => {
       const target = item.getAttribute('data-page');
 
-      sidebarItems.forEach(i => i.classList.remove('active'));
+      sidebarItems.forEach((i) => i.classList.remove('active'));
       item.classList.add('active');
 
-      pages.forEach(page => {
+      pages.forEach((page) => {
         page.classList.toggle('active', page.id === target);
       });
 
       currentPage = target;
+      localStorage.setItem('currentPage', currentPage);
       if (currentPage === 'wallet') {
         fetchBalance();
         fetchNetworkHistory();
@@ -154,7 +178,7 @@ window.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   };
 
-  const importSeed = files => {
+  const importSeed = (files) => {
     const file = files[0];
     if (!file || !seedInput) return;
     const reader = new FileReader();
@@ -183,7 +207,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (importSeedBtn && seedFileInput) {
     importSeedBtn.addEventListener('click', () => seedFileInput.click());
-    seedFileInput.addEventListener('change', e => {
+    seedFileInput.addEventListener('change', (e) => {
       importSeed(e.target.files);
       seedFileInput.value = '';
     });
@@ -228,10 +252,10 @@ window.addEventListener('DOMContentLoaded', () => {
       rpcUrl: localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org',
       accountIndex: parseInt(localStorage.getItem('accountIndex') || '0', 10),
       contacts: JSON.parse(localStorage.getItem('contacts') || '[]'),
-      history: JSON.parse(localStorage.getItem('history') || '[]')
+      history: JSON.parse(localStorage.getItem('history') || '[]'),
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: 'application/json'
+      type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -241,7 +265,7 @@ window.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   };
 
-  const importSettings = files => {
+  const importSettings = (files) => {
     const file = files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -339,13 +363,13 @@ window.addEventListener('DOMContentLoaded', () => {
       const resp = await fetch(getRpcUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'account_balance', account: address })
+        body: JSON.stringify({ action: 'account_balance', account: address }),
       });
       const data = await resp.json();
       if (data && data.balance) {
         const nyano = window.nyano.convert(data.balance, {
           from: window.nyano.Unit.raw,
-          to: window.nyano.Unit.NANO
+          to: window.nyano.Unit.NANO,
         });
         balanceEl.textContent = nyano;
       } else {
@@ -359,7 +383,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Wallet data
   let address = storedSeed
     ? window.nyano.deriveAddress(storedSeed, accountIndex)
-    : "nyano_11111111111111111111111111111111111111111111111111111111111";
+    : 'nyano_11111111111111111111111111111111111111111111111111111111111';
   const balanceEl = document.getElementById('balance');
   const addressEl = document.getElementById('address');
   const qrCanvas = document.getElementById('address-qr');
@@ -390,9 +414,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (viewAddrBtn) {
     viewAddrBtn.addEventListener('click', () => {
       updateAddress();
-      window.nyano.openExternal(
-        `https://nyanoscan.org/account/${address}`
-      );
+      window.nyano.openExternal(`https://nyanoscan.org/account/${address}`);
     });
   }
   if (refreshBalanceBtn) {
@@ -422,7 +444,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!history.length) return;
     const header = 'to,amount,date,hash\n';
     const rows = history
-      .map(tx => `${tx.to},${tx.amount},${tx.date},${tx.hash || ''}`)
+      .map((tx) => `${tx.to},${tx.amount},${tx.date},${tx.hash || ''}`)
       .join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -438,7 +460,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const tbody = historyTable.querySelector('tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
-    history.forEach(tx => {
+    history.forEach((tx) => {
       const row = document.createElement('tr');
       const hashCell = tx.hash
         ? `<a href="#" data-hash="${tx.hash}">${tx.hash}</a>`
@@ -446,8 +468,8 @@ window.addEventListener('DOMContentLoaded', () => {
       row.innerHTML = `<td>${tx.to}</td><td>${tx.amount}</td><td>${tx.date}</td><td>${hashCell}</td>`;
       tbody.appendChild(row);
     });
-    tbody.querySelectorAll('a[data-hash]').forEach(link => {
-      link.addEventListener('click', ev => {
+    tbody.querySelectorAll('a[data-hash]').forEach((link) => {
+      link.addEventListener('click', (ev) => {
         ev.preventDefault();
         const h = link.getAttribute('data-hash');
         window.nyano.openExternal(`https://nyanoscan.org/block/${h}`);
@@ -489,7 +511,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const infoResp = await fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'account_info', account: acct })
+          body: JSON.stringify({ action: 'account_info', account: acct }),
         });
         const info = await infoResp.json();
         const previous = info.frontier || null;
@@ -498,8 +520,8 @@ window.addEventListener('DOMContentLoaded', () => {
         const sendRaw = BigInt(
           window.nyano.convert(amt, {
             from: window.nyano.Unit.NANO,
-            to: window.nyano.Unit.raw
-          })
+            to: window.nyano.Unit.raw,
+          }),
         );
         if (sendRaw > balanceRaw) {
           status.textContent = 'Insufficient balance';
@@ -510,7 +532,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const workResp = await fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'work_generate', hash: workHash })
+          body: JSON.stringify({ action: 'work_generate', hash: workHash }),
         });
         const workData = await workResp.json();
         if (!workData.work) {
@@ -523,10 +545,10 @@ window.addEventListener('DOMContentLoaded', () => {
           representative,
           balance: newBalance.toString(),
           link: to,
-          work: workData.work
+          work: workData.work,
         };
 
-        const { block, hash } = window.nyano.createBlock(secretKey, blockData);
+        const { block } = window.nyano.createBlock(secretKey, blockData);
         const procResp = await fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -534,8 +556,8 @@ window.addEventListener('DOMContentLoaded', () => {
             action: 'process',
             json_block: 'true',
             subtype: previous ? 'send' : 'open',
-            block
-          })
+            block,
+          }),
         });
         const proc = await procResp.json();
         if (proc.hash) {
@@ -544,7 +566,7 @@ window.addEventListener('DOMContentLoaded', () => {
             to,
             amount: amt,
             date: new Date().toLocaleString(),
-            hash: proc.hash
+            hash: proc.hash,
           };
           history.unshift(tx);
           saveHistory();
@@ -575,9 +597,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Network account history
   const networkHistoryTable = document.getElementById('network-history-table');
-  const refreshNetworkHistoryBtn = document.getElementById('refresh-network-history');
+  const refreshNetworkHistoryBtn = document.getElementById(
+    'refresh-network-history',
+  );
 
-  const renderNetworkHistory = entries => {
+  const renderNetworkHistory = (entries) => {
     if (!networkHistoryTable) return;
     const tbody = networkHistoryTable.querySelector('tbody');
     if (!tbody) return;
@@ -588,13 +612,13 @@ window.addEventListener('DOMContentLoaded', () => {
       tbody.appendChild(row);
       return;
     }
-    entries.forEach(e => {
+    entries.forEach((e) => {
       const row = document.createElement('tr');
       row.innerHTML = `<td>${e.type}</td><td>${e.amount}</td><td><a href="#" data-hash="${e.hash}">${e.hash}</a></td>`;
       tbody.appendChild(row);
     });
-    tbody.querySelectorAll('a[data-hash]').forEach(link => {
-      link.addEventListener('click', ev => {
+    tbody.querySelectorAll('a[data-hash]').forEach((link) => {
+      link.addEventListener('click', (ev) => {
         ev.preventDefault();
         const h = link.getAttribute('data-hash');
         window.nyano.openExternal(`https://nyanoscan.org/block/${h}`);
@@ -612,13 +636,18 @@ window.addEventListener('DOMContentLoaded', () => {
       const resp = await fetch(getRpcUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'account_history', account: address, count: 20, raw: true })
+        body: JSON.stringify({
+          action: 'account_history',
+          account: address,
+          count: 20,
+          raw: true,
+        }),
       });
       const data = await resp.json();
-      const entries = (data.history || []).map(h => ({
+      const entries = (data.history || []).map((h) => ({
         type: h.type,
         amount: Number(h.amount) / 1e30,
-        hash: h.hash
+        hash: h.hash,
       }));
       renderNetworkHistory(entries);
     } catch (err) {
@@ -641,6 +670,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const importFileInput = document.getElementById('import-file');
   const contactNameInput = document.getElementById('contact-name');
   const contactAddressInput = document.getElementById('contact-address');
+  const contactSearchInput = document.getElementById('contact-search');
   let contacts = [];
 
   const loadContacts = () => {
@@ -661,26 +691,35 @@ window.addEventListener('DOMContentLoaded', () => {
     const tbody = contactsTable.querySelector('tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
+    const search = contactSearchInput
+      ? contactSearchInput.value.trim().toLowerCase()
+      : '';
     contacts.forEach((c, i) => {
+      if (
+        search &&
+        !c.name.toLowerCase().includes(search) &&
+        !c.address.toLowerCase().includes(search)
+      )
+        return;
       const row = document.createElement('tr');
       row.innerHTML = `<td>${c.name}</td><td>${c.address}</td><td><button data-idx="${i}" class="use-contact">Use</button> <button data-idx="${i}" class="edit-contact">Edit</button> <button data-idx="${i}" class="delete-contact">Delete</button></td>`;
       tbody.appendChild(row);
     });
 
-    tbody.querySelectorAll('.use-contact').forEach(btn => {
-      btn.addEventListener('click', e => {
+    tbody.querySelectorAll('.use-contact').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
         const idx = e.target.getAttribute('data-idx');
         const addr = contacts[idx].address;
         const sendInput = document.getElementById('send-to');
         if (sendInput) sendInput.value = addr;
-        sidebarItems.forEach(i => {
+        sidebarItems.forEach((i) => {
           if (i.getAttribute('data-page') === 'wallet') i.click();
         });
       });
     });
 
-    tbody.querySelectorAll('.edit-contact').forEach(btn => {
-      btn.addEventListener('click', e => {
+    tbody.querySelectorAll('.edit-contact').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
         const idx = e.target.getAttribute('data-idx');
         const c = contacts[idx];
         const name = prompt('Edit name', c.name);
@@ -693,8 +732,8 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    tbody.querySelectorAll('.delete-contact').forEach(btn => {
-      btn.addEventListener('click', e => {
+    tbody.querySelectorAll('.delete-contact').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
         const idx = e.target.getAttribute('data-idx');
         contacts.splice(idx, 1);
         saveContacts();
@@ -705,6 +744,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   loadContacts();
   renderContacts();
+
+  if (contactSearchInput) {
+    contactSearchInput.addEventListener('input', renderContacts);
+  }
 
   if (addContactBtn) {
     addContactBtn.addEventListener('click', () => {
@@ -722,7 +765,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const exportContacts = () => {
     if (!contacts.length) return;
     const blob = new Blob([JSON.stringify(contacts, null, 2)], {
-      type: 'application/json'
+      type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -732,7 +775,7 @@ window.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   };
 
-  const importContacts = files => {
+  const importContacts = (files) => {
     const file = files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -740,7 +783,7 @@ window.addEventListener('DOMContentLoaded', () => {
       try {
         const data = JSON.parse(reader.result);
         if (Array.isArray(data)) {
-          data.forEach(c => {
+          data.forEach((c) => {
             if (c.name && c.address) {
               contacts.push({ name: c.name, address: c.address });
             }
@@ -759,7 +802,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (importContactsBtn && importFileInput) {
     importContactsBtn.addEventListener('click', () => importFileInput.click());
-    importFileInput.addEventListener('change', e => {
+    importFileInput.addEventListener('change', (e) => {
       importContacts(e.target.files);
       importFileInput.value = '';
     });
@@ -770,8 +813,10 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   if (importSettingsBtn && settingsFileInput) {
-    importSettingsBtn.addEventListener('click', () => settingsFileInput.click());
-    settingsFileInput.addEventListener('change', e => {
+    importSettingsBtn.addEventListener('click', () =>
+      settingsFileInput.click(),
+    );
+    settingsFileInput.addEventListener('change', (e) => {
       importSettings(e.target.files);
       settingsFileInput.value = '';
     });
@@ -847,7 +892,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (latencyEl) latencyEl.textContent = '-';
     if (nodeVerEl) nodeVerEl.textContent = '-';
     try {
-      const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd');
+      const resp = await fetch(
+        'https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd',
+      );
       const data = await resp.json();
       if (priceEl) priceEl.textContent = data.nano.usd;
     } catch (err) {
@@ -860,34 +907,41 @@ window.addEventListener('DOMContentLoaded', () => {
         fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'version' })
+          body: JSON.stringify({ action: 'version' }),
         }),
         fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'block_count' })
+          body: JSON.stringify({ action: 'block_count' }),
         }),
         fetch(rpcUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'peers' })
-        })
+          body: JSON.stringify({ action: 'peers' }),
+        }),
       ]);
       const latency = Math.round(performance.now() - start);
       if (latencyEl) latencyEl.textContent = latency + 'ms';
 
       const verData = await versionResp.json();
       if (networkEl) networkEl.textContent = verData.node_vendor || 'online';
-      if (nodeVerEl && verData.rpc_version) nodeVerEl.textContent = verData.rpc_version;
+      if (nodeVerEl && verData.rpc_version)
+        nodeVerEl.textContent = verData.rpc_version;
 
       const blockData = await blockResp.json();
       if (blockCountEl && blockData.count !== undefined) {
         blockCountEl.textContent = blockData.count;
       }
-      if (syncEl && blockData.count !== undefined && blockData.unchecked !== undefined) {
+      if (
+        syncEl &&
+        blockData.count !== undefined &&
+        blockData.unchecked !== undefined
+      ) {
         const count = parseInt(blockData.count, 10);
         const unchecked = parseInt(blockData.unchecked, 10);
-        const progress = count ? Math.round(((count - unchecked) / count) * 100) : 0;
+        const progress = count
+          ? Math.round(((count - unchecked) / count) * 100)
+          : 0;
         syncEl.textContent = progress + '%';
       }
 
@@ -923,4 +977,3 @@ window.addEventListener('DOMContentLoaded', () => {
     if (currentPage === 'dashboard') fetchDashboard();
   }, 60000);
 });
-

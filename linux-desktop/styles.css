@@ -94,7 +94,6 @@ header h1 {
   background: #1d2735;
 }
 
-
 #content {
   flex: 1;
   margin-top: 60px;
@@ -241,6 +240,12 @@ th {
 
 .add-contact button {
   padding: 6px 10px;
+}
+
+#contact-search {
+  padding: 6px;
+  margin-bottom: 10px;
+  width: 300px;
 }
 
 .network-history {
