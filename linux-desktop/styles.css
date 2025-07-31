@@ -30,13 +30,29 @@ body {
 header {
   background-color: #222;
   color: #fff;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+header h1 {
+  flex: 1;
+  margin: 0;
 }
 
 .dark header {
@@ -50,6 +66,16 @@ header {
   color: #fff;
   height: calc(100vh - 60px);
   box-sizing: border-box;
+}
+
+#sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#sidebar.collapsed ul {
+  display: none;
 }
 
 #sidebar ul {
