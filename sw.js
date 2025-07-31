@@ -12,6 +12,7 @@ const ASSETS = [
   '/apple-touch-icon.png',
   '/safari-pinned-tab.svg',
   '/js/price.js',
+  '/css/Ubuntu-Title.woff2',
 ];
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -28,6 +29,9 @@ self.addEventListener('activate', (event) => {
         ),
       ),
   );
+});
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 self.addEventListener('fetch', (event) => {
   event.respondWith(
