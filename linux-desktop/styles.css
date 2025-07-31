@@ -176,3 +176,17 @@ th {
 .add-contact button {
   padding: 6px 10px;
 }
+
+.rpc-settings {
+  margin: 20px 0;
+}
+
+.rpc-settings input {
+  width: 300px;
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.rpc-settings button {
+  padding: 6px 10px;
+}

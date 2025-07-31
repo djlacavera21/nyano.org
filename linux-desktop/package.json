@@ -4,12 +4,16 @@
   "description": "Nyano desktop wallet and miner",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager . NyanoDesktop --overwrite"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",
     "electron": "^37.2.4",
     "nanocurrency": "^2.5.0",
     "qrcode": "^1.5.1"
+  },
+  "devDependencies": {
+    "electron-packager": "^17.1.2"
   }
 }
