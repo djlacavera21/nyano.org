@@ -191,6 +191,75 @@ window.addEventListener('DOMContentLoaded', () => {
     exportHistoryBtn.addEventListener('click', exportHistory);
   }
 
+  // Contacts
+  const contactsTable = document.getElementById('contacts-table');
+  const addContactBtn = document.getElementById('add-contact');
+  const contactNameInput = document.getElementById('contact-name');
+  const contactAddressInput = document.getElementById('contact-address');
+  let contacts = [];
+
+  const loadContacts = () => {
+    try {
+      const stored = localStorage.getItem('contacts');
+      contacts = stored ? JSON.parse(stored) : [];
+    } catch {
+      contacts = [];
+    }
+  };
+
+  const saveContacts = () => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  };
+
+  const renderContacts = () => {
+    if (!contactsTable) return;
+    const tbody = contactsTable.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    contacts.forEach((c, i) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${c.name}</td><td>${c.address}</td><td><button data-idx="${i}" class="use-contact">Use</button> <button data-idx="${i}" class="delete-contact">Delete</button></td>`;
+      tbody.appendChild(row);
+    });
+
+    tbody.querySelectorAll('.use-contact').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = e.target.getAttribute('data-idx');
+        const addr = contacts[idx].address;
+        const sendInput = document.getElementById('send-to');
+        if (sendInput) sendInput.value = addr;
+        sidebarItems.forEach(i => {
+          if (i.getAttribute('data-page') === 'wallet') i.click();
+        });
+      });
+    });
+
+    tbody.querySelectorAll('.delete-contact').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = e.target.getAttribute('data-idx');
+        contacts.splice(idx, 1);
+        saveContacts();
+        renderContacts();
+      });
+    });
+  };
+
+  loadContacts();
+  renderContacts();
+
+  if (addContactBtn) {
+    addContactBtn.addEventListener('click', () => {
+      const name = contactNameInput.value.trim();
+      const addr = contactAddressInput.value.trim();
+      if (!name || !addr) return;
+      contacts.push({ name, address: addr });
+      saveContacts();
+      renderContacts();
+      contactNameInput.value = '';
+      contactAddressInput.value = '';
+    });
+  }
+
   // Miner controls
   let mining = false;
   let startTime = 0;

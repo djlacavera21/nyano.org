@@ -14,6 +14,10 @@ seed on the **Settings** page and select which network (mainnet, testnet, or
 beta) the app should target. The derived Nyano address is displayed in the
 wallet view along with a QR code.
 
+You can now manage saved addresses on the **Contacts** page. Stored contacts
+let you quickly fill the send form in the wallet view and are persisted in the
+browser's local storage.
+
 ## Install dependencies
 
 ```
