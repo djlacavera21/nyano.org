@@ -125,8 +125,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const seed = seedInput.value.trim();
     if (!seed) return;
     const addr = window.nyano.deriveAddress(seed, accountIndex);
+    const nanoAddr = window.nyano.deriveNanoAddress(seed, accountIndex);
     address = addr;
+    nanoAddress = nanoAddr;
     if (addressEl) addressEl.value = addr;
+    if (nanoAddressEl) nanoAddressEl.value = nanoAddr;
     if (currentIndexEl) currentIndexEl.textContent = accountIndex;
     if (qrCanvas && typeof QRCode !== 'undefined') {
       QRCode.toCanvas(qrCanvas, addr, { margin: 1 }, () => {});
@@ -369,7 +372,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (data && data.balance) {
         const nyano = window.nyano.convert(data.balance, {
           from: window.nyano.Unit.raw,
-          to: window.nyano.Unit.NANO,
+          to: window.nyano.Unit.nano,
         });
         balanceEl.textContent = nyano;
       } else {
@@ -384,11 +387,18 @@ window.addEventListener('DOMContentLoaded', () => {
   let address = storedSeed
     ? window.nyano.deriveAddress(storedSeed, accountIndex)
     : 'nyano_11111111111111111111111111111111111111111111111111111111111';
+  let nanoAddress = storedSeed
+    ? window.nyano.deriveNanoAddress(storedSeed, accountIndex)
+    : 'nano_11111111111111111111111111111111111111111111111111111111111';
   const balanceEl = document.getElementById('balance');
   const addressEl = document.getElementById('address');
+  const nanoAddressEl = document.getElementById('nano-address');
   const qrCanvas = document.getElementById('address-qr');
   if (addressEl) {
     addressEl.value = address;
+  }
+  if (nanoAddressEl) {
+    nanoAddressEl.value = nanoAddress;
   }
   if (balanceEl) {
     balanceEl.textContent = '0';
@@ -400,6 +410,7 @@ window.addEventListener('DOMContentLoaded', () => {
   else if (!encryptedSeed) fetchBalance();
 
   const copyBtn = document.getElementById('copy-address');
+  const copyNanoBtn = document.getElementById('copy-nano-address');
   const viewAddrBtn = document.getElementById('view-address');
   const refreshBalanceBtn = document.getElementById('refresh-balance');
   const saveQrBtn = document.getElementById('save-address-qr');
@@ -410,6 +421,16 @@ window.addEventListener('DOMContentLoaded', () => {
       navigator.clipboard.writeText(address).then(() => {
         copyBtn.textContent = 'Copied!';
         setTimeout(() => (copyBtn.textContent = ''), 1000);
+      });
+    });
+  }
+  if (copyNanoBtn) {
+    copyNanoBtn.addEventListener('click', () => {
+      updateAddress();
+      const nanoAddr = nanoAddressEl ? nanoAddressEl.value : '';
+      navigator.clipboard.writeText(nanoAddr).then(() => {
+        copyNanoBtn.textContent = 'Copied!';
+        setTimeout(() => (copyNanoBtn.textContent = ''), 1000);
       });
     });
   }
