@@ -62,6 +62,12 @@ npm install
 npm start
 ```
 
+To generate packages for major platforms run:
+
+```bash
+npm run build-all
+```
+
 If a `nano_node` binary exists under `nano-node/build`, the desktop app
 will automatically launch it in daemon mode when started. You can also
 start or stop the embedded node from the **Settings** page using the new
