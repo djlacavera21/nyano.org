@@ -164,8 +164,17 @@
       <section id="miner" class="page">
         <h2>Miner</h2>
         <div class="miner-controls">
+          <label
+            >Block Hash
+            <input type="text" id="work-hash" placeholder="Block hash" />
+          </label>
+          <label
+            >Threads
+            <input type="number" id="worker-count" min="1" value="1" />
+          </label>
           <p>Status: <span id="miner-status">stopped</span></p>
           <p>Time: <span id="miner-timer">0s</span></p>
+          <p>Work: <span id="work-output">-</span></p>
           <button id="start-miner">Start Miner</button>
           <button id="stop-miner" disabled>Stop Miner</button>
         </div>
