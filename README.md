@@ -159,6 +159,7 @@ You can also specify options:
 npm run generate-wallet -- --index 2 --prefix nyano_ --count 3
 npm run generate-wallet -- --seed <hex_seed> --count 2
 npm run generate-wallet -- --mnemonic "word list..."
+npm run generate-wallet -- --mnemonic "word list..." --passphrase myphrase
 npm run generate-wallet -- --keys
 npm run generate-wallet -- --password mypass -- wallet.json
 ```
@@ -178,9 +179,9 @@ It exposes several endpoints:
   `prefix` and `count` allow specifying the account index, address prefix and
   number of addresses to generate.
 - `POST /derive` – derive from a provided seed or mnemonic. Send `index`,
-  `prefix` and `count` in the JSON body to control the derived addresses.
+  `prefix`, `passphrase` and `count` in the JSON body to control the derived addresses.
 - `POST /keys` – return the secret and public keys for a seed or mnemonic at a
-  given index.
+  given index. Include `passphrase` if the mnemonic uses one.
 - `POST /encrypt` – encrypt a seed with a password. Send `seed` and `password`
   in the JSON body.
 - `POST /decrypt` – decrypt an encrypted seed using a password. Send
