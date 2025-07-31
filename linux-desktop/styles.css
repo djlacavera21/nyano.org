@@ -244,3 +244,12 @@ th {
 .rpc-settings button {
   padding: 6px 10px;
 }
+
+.app-settings {
+  margin: 20px 0;
+}
+
+.app-settings button {
+  padding: 6px 10px;
+  margin-right: 4px;
+}
