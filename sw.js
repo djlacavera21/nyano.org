@@ -12,6 +12,7 @@ const ASSETS = [
   '/apple-touch-icon.png',
   '/safari-pinned-tab.svg',
   '/js/price.js',
+  '/js/network.js',
   '/css/Ubuntu-Title.woff2',
 ];
 self.addEventListener('install', (event) => {
