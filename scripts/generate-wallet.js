@@ -19,6 +19,7 @@ let showKeys = false;
 let seed;
 let mnemonic;
 let password;
+let passphrase;
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -44,6 +45,9 @@ for (let i = 0; i < args.length; i++) {
     case '--password':
       password = args[++i];
       break;
+    case '--passphrase':
+      passphrase = args[++i];
+      break;
     default:
       if (!outPath) outPath = args[i];
   }
@@ -54,7 +58,7 @@ async function main() {
   if (seed) {
     wallet = deriveWalletFromSeed(seed, index, prefix);
   } else if (mnemonic) {
-    wallet = deriveWalletFromMnemonic(mnemonic, index, prefix);
+    wallet = deriveWalletFromMnemonic(mnemonic, index, prefix, passphrase);
   } else {
     wallet = await generateWallet(index, prefix);
   }

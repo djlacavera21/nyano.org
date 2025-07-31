@@ -34,7 +34,7 @@ app.get('/generate', async (req, res) => {
 });
 
 app.post('/derive', (req, res) => {
-  const { seed, mnemonic } = req.body;
+  const { seed, mnemonic, passphrase = '' } = req.body;
   const index = req.body.index ? parseInt(req.body.index, 10) : 0;
   const prefix = req.body.prefix || 'nano_';
   const count = req.body.count ? parseInt(req.body.count, 10) : 1;
@@ -43,7 +43,7 @@ app.post('/derive', (req, res) => {
     if (seed) {
       wallet = deriveWalletFromSeed(seed, index, prefix);
     } else if (mnemonic) {
-      wallet = deriveWalletFromMnemonic(mnemonic, index, prefix);
+      wallet = deriveWalletFromMnemonic(mnemonic, index, prefix, passphrase);
     } else {
       return res.status(400).json({ error: 'seed or mnemonic required' });
     }
@@ -55,7 +55,7 @@ app.post('/derive', (req, res) => {
 });
 
 app.post('/keys', (req, res) => {
-  const { seed, mnemonic } = req.body;
+  const { seed, mnemonic, passphrase = '' } = req.body;
   const index = req.body.index ? parseInt(req.body.index, 10) : 0;
   try {
     let secretKey;
@@ -64,8 +64,8 @@ app.post('/keys', (req, res) => {
       secretKey = deriveSecretKeyFromSeed(seed, index);
       publicKey = derivePublicKeyFromSeed(seed, index);
     } else if (mnemonic) {
-      secretKey = deriveSecretKeyFromMnemonic(mnemonic, index);
-      publicKey = derivePublicKeyFromMnemonic(mnemonic, index);
+      secretKey = deriveSecretKeyFromMnemonic(mnemonic, index, passphrase);
+      publicKey = derivePublicKeyFromMnemonic(mnemonic, index, passphrase);
     } else {
       return res.status(400).json({ error: 'seed or mnemonic required' });
     }

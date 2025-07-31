@@ -12,6 +12,17 @@ async function run() {
   assert.strictEqual(fromSeed.address, w.address);
   assert.strictEqual(fromMnemonic.address, w.address);
 
+  const fromMnemonicPass = wallet.deriveWalletFromMnemonic(
+    w.mnemonic,
+    0,
+    'nano_',
+    'passphrase',
+  );
+  const seedPass = wallet.seedFromMnemonic(w.mnemonic, 'passphrase');
+  const fromSeedPass = wallet.deriveWalletFromSeed(seedPass);
+  assert.strictEqual(fromMnemonicPass.address, fromSeedPass.address);
+  assert.notStrictEqual(fromMnemonicPass.address, w.address);
+
   const sk = wallet.deriveSecretKeyFromMnemonic(w.mnemonic);
   const pk = wallet.derivePublicKeyFromMnemonic(w.mnemonic);
   assert(wallet.validateSecretKey(sk));
