@@ -23,6 +23,10 @@ Contacts can also be imported from or exported to a JSON file using the
 **Import** and **Export** buttons. This makes it easy to back up your saved
 addresses or move them between computers.
 
+The wallet page can now fetch and display your account history from the
+configured RPC endpoint. Click **Refresh** in the history section to load the
+latest 20 transactions from the network.
+
 The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you
 can update the URL to point to any compatible node.
