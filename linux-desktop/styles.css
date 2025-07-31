@@ -132,6 +132,21 @@ header h1 {
   margin-right: 4px;
 }
 
+.nano-address {
+  margin-bottom: 20px;
+}
+
+.nano-address input {
+  width: calc(100% - 110px);
+  padding: 6px;
+  margin-right: 4px;
+}
+
+.nano-address button {
+  padding: 6px 10px;
+  margin-right: 4px;
+}
+
 .send-form label {
   display: block;
   margin-bottom: 10px;

@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('nyano', {
   generateSeed,
   deriveAddress: (seed, index = 0) =>
     deriveAddress(seed, index, { prefix: 'nyano_' }),
+  deriveNanoAddress: (seed, index = 0) =>
+    deriveAddress(seed, index, { prefix: 'nano_' }),
   deriveSecretKey,
   derivePublicKey,
   createBlock,
