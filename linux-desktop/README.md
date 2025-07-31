@@ -40,6 +40,12 @@ options. These let you back up or restore all application data including your
 seed, contacts, history and preferences. A **Reset** button is available to
 clear all saved data if needed.
 
+Window size and position are now remembered across sessions. The app creates a
+small `window-state.json` file under Electron's userData directory and restores
+the previous bounds on startup. An application menu with **File** and **Help**
+items has also been added. Selecting **About** from the Help menu shows a simple
+dialog displaying the application version.
+
 ## Install dependencies
 
 ```

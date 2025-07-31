@@ -40,6 +40,9 @@ where addresses can be added, edited or removed. Contacts support import and exp
 to a JSON file for easy backup.
 You can also export or import the entire application settings from the Settings
 page or reset all saved data.
+The desktop app now saves its window size and position so it reopens exactly
+where you left it. A basic application menu provides Quit and About actions; the
+About dialog shows the current version number.
 
 ```
 cd linux-desktop
