@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 const { name, version } = require('./package.json');
 
 function getStatePath() {
@@ -27,6 +28,17 @@ function saveWindowState(win) {
   try {
     fs.writeFileSync(getStatePath(), JSON.stringify(state));
   } catch {}
+}
+
+let nodeProcess;
+function startLocalNode() {
+  const nodePath = path.join(__dirname, '..', 'nano-node', 'build', 'nano_node');
+  if (fs.existsSync(nodePath)) {
+    nodeProcess = spawn(nodePath, ['--daemon']);
+    nodeProcess.on('error', err => {
+      console.error('Failed to start nano_node', err);
+    });
+  }
 }
 
 function createWindow () {
@@ -75,6 +87,7 @@ function createMenu() {
 }
 
 app.whenReady().then(() => {
+  startLocalNode();
   createWindow();
   createMenu();
 
@@ -85,4 +98,8 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('quit', () => {
+  if (nodeProcess) nodeProcess.kill();
 });
