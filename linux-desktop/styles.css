@@ -253,3 +253,9 @@ th {
   padding: 6px 10px;
   margin-right: 4px;
 }
+
+.sync-progress,
+.rpc-latency,
+.node-version {
+  margin-bottom: 10px;
+}
