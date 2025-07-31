@@ -31,6 +31,10 @@ The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you
 can update the URL to point to any compatible node.
 
+You can also export your wallet seed to a text file or import it from one using
+the new **Export** and **Import** buttons in the Wallet Seed section. This makes
+backing up and restoring your wallet straightforward.
+
 ## Install dependencies
 
 ```
