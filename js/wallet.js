@@ -14,6 +14,7 @@ function generateWallet() {
     );
   }
 }
+window.generateWallet = generateWallet;
 
 function copyToClipboard(text) {
   if (navigator.clipboard) {

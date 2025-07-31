@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "nyano.org",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.15.4"
+    "@fortawesome/fontawesome-free": "5.15.4",
+    "nanocurrency": "^2.5.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
@@ -21,7 +22,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint \"**/*.js\"",
     "format": "prettier \"**/*.{js,css,html}\" --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate-wallet": "node scripts/generate-wallet.js"
   },
   "repository": {
     "type": "git",
@@ -35,7 +37,12 @@
   },
   "homepage": "https://github.com/rickyhewitt/nyano#readme",
   "lint-staged": {
-    "*.js": ["prettier --write", "eslint"],
-    "*.{css,html}": ["prettier --write"]
+    "*.js": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{css,html}": [
+      "prettier --write"
+    ]
   }
 }
