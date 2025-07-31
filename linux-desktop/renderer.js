@@ -40,8 +40,57 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Wallet placeholder data
-  const address = 'nyano_111111111111111111111111111111111111111111111111111111111111';
+  // Seed and network settings
+  const seedInput = document.getElementById('seed-input');
+  const toggleSeedBtn = document.getElementById('toggle-seed');
+  const generateSeedBtn = document.getElementById('generate-seed');
+  const saveSeedBtn = document.getElementById('save-seed');
+  const networkSelect = document.getElementById('network-select');
+
+  const storedSeed = localStorage.getItem('seed') || '';
+  if (seedInput) seedInput.value = storedSeed;
+  const storedNetwork = localStorage.getItem('network') || 'mainnet';
+  if (networkSelect) networkSelect.value = storedNetwork;
+
+  const updateAddress = () => {
+    if (!seedInput) return;
+    const seed = seedInput.value.trim();
+    if (!seed) return;
+    const addr = window.nyano.deriveAddress(seed, 0);
+    address = addr;
+    if (addressEl) addressEl.value = addr;
+    if (qrCanvas && typeof QRCode !== 'undefined') {
+      QRCode.toCanvas(qrCanvas, addr, { margin: 1 }, () => {});
+    }
+  };
+
+  if (toggleSeedBtn && seedInput) {
+    toggleSeedBtn.addEventListener('click', () => {
+      seedInput.type = seedInput.type === 'password' ? 'text' : 'password';
+    });
+  }
+
+  if (generateSeedBtn && seedInput) {
+    generateSeedBtn.addEventListener('click', () => {
+      seedInput.value = window.nyano.generateSeed();
+    });
+  }
+
+  if (saveSeedBtn && seedInput) {
+    saveSeedBtn.addEventListener('click', () => {
+      localStorage.setItem('seed', seedInput.value.trim());
+      updateAddress();
+    });
+  }
+
+  if (networkSelect) {
+    networkSelect.addEventListener('change', () => {
+      localStorage.setItem('network', networkSelect.value);
+    });
+  }
+
+  // Wallet data
+  let address = storedSeed ? window.nyano.deriveAddress(storedSeed, 0) : "nyano_11111111111111111111111111111111111111111111111111111111111";
   const balanceEl = document.getElementById('balance');
   const addressEl = document.getElementById('address');
   const qrCanvas = document.getElementById('address-qr');
@@ -54,10 +103,12 @@ window.addEventListener('DOMContentLoaded', () => {
   if (qrCanvas && typeof QRCode !== 'undefined') {
     QRCode.toCanvas(qrCanvas, address, { margin: 1 }, function () {});
   }
+  if (storedSeed) updateAddress();
 
   const copyBtn = document.getElementById('copy-address');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
+      updateAddress();
       navigator.clipboard.writeText(address).then(() => {
         copyBtn.textContent = 'Copied!';
         setTimeout(() => (copyBtn.textContent = ''), 1000);

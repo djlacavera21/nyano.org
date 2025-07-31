@@ -9,6 +9,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",
     "electron": "^37.2.4",
+    "nanocurrency": "^2.5.0",
     "qrcode": "^1.5.1"
   }
 }
