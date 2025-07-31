@@ -713,11 +713,15 @@ window.addEventListener('DOMContentLoaded', () => {
   // Dashboard data
   const priceEl = document.getElementById('nano-price');
   const networkEl = document.getElementById('network-status');
+  const blockCountEl = document.getElementById('block-count');
+  const peerCountEl = document.getElementById('peer-count');
   const refreshBtn = document.getElementById('refresh-dashboard');
 
   const fetchDashboard = async () => {
     if (priceEl) priceEl.textContent = 'loading...';
     if (networkEl) networkEl.textContent = 'checking...';
+    if (blockCountEl) blockCountEl.textContent = '...';
+    if (peerCountEl) peerCountEl.textContent = '...';
     try {
       const resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=nano&vs_currencies=usd');
       const data = await resp.json();
@@ -726,15 +730,41 @@ window.addEventListener('DOMContentLoaded', () => {
       if (priceEl) priceEl.textContent = 'error';
     }
     try {
-      const rpcResp = await fetch(getRpcUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'version' })
-      });
-      await rpcResp.json();
-      if (networkEl) networkEl.textContent = 'online';
+      const rpcUrl = getRpcUrl();
+      const [versionResp, blockResp, peersResp] = await Promise.all([
+        fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'version' })
+        }),
+        fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'block_count' })
+        }),
+        fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'peers' })
+        })
+      ]);
+
+      const verData = await versionResp.json();
+      if (networkEl) networkEl.textContent = verData.node_vendor || 'online';
+
+      const blockData = await blockResp.json();
+      if (blockCountEl && blockData.count !== undefined) {
+        blockCountEl.textContent = blockData.count;
+      }
+
+      const peersData = await peersResp.json();
+      if (peerCountEl && peersData.peers) {
+        peerCountEl.textContent = Object.keys(peersData.peers).length;
+      }
     } catch (err) {
       if (networkEl) networkEl.textContent = 'offline';
+      if (blockCountEl) blockCountEl.textContent = '-';
+      if (peerCountEl) peerCountEl.textContent = '-';
     }
   };
 
