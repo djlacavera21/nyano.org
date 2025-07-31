@@ -1,4 +1,4 @@
-const { contextBridge, shell } = require('electron');
+const { contextBridge, shell, ipcRenderer } = require('electron');
 const { version } = require('./package.json');
 const crypto = require('crypto');
 const {
@@ -8,7 +8,7 @@ const {
   derivePublicKey,
   createBlock,
   convert,
-  Unit
+  Unit,
 } = require('nanocurrency');
 
 contextBridge.exposeInMainWorld('nyano', {
@@ -24,7 +24,7 @@ contextBridge.exposeInMainWorld('nyano', {
   createBlock,
   convert,
   Unit,
-  openExternal: url => shell.openExternal(url),
+  openExternal: (url) => shell.openExternal(url),
   encryptSeed: (seed, password) => {
     const iv = crypto.randomBytes(16);
     const key = crypto.createHash('sha256').update(password).digest();
@@ -44,5 +44,8 @@ contextBridge.exposeInMainWorld('nyano', {
     } catch {
       return null;
     }
-  }
+  },
+  startNode: () => ipcRenderer.invoke('start-node'),
+  stopNode: () => ipcRenderer.invoke('stop-node'),
+  nodeStatus: () => ipcRenderer.invoke('node-status'),
 });

@@ -103,6 +103,33 @@ window.addEventListener('DOMContentLoaded', () => {
   const importSettingsBtn = document.getElementById('import-settings');
   const resetSettingsBtn = document.getElementById('reset-settings');
   const settingsFileInput = document.getElementById('settings-file');
+  const startNodeBtn = document.getElementById('start-node');
+  const stopNodeBtn = document.getElementById('stop-node');
+  const nodeStatusEl = document.getElementById('node-status');
+
+  const updateNodeControls = async () => {
+    const running = await window.nyano.nodeStatus();
+    if (nodeStatusEl)
+      nodeStatusEl.textContent = running ? 'running' : 'stopped';
+    if (startNodeBtn) startNodeBtn.disabled = running;
+    if (stopNodeBtn) stopNodeBtn.disabled = !running;
+  };
+
+  if (startNodeBtn) {
+    startNodeBtn.addEventListener('click', async () => {
+      await window.nyano.startNode();
+      updateNodeControls();
+    });
+  }
+
+  if (stopNodeBtn) {
+    stopNodeBtn.addEventListener('click', async () => {
+      await window.nyano.stopNode();
+      updateNodeControls();
+    });
+  }
+
+  updateNodeControls();
 
   const encryptedSeed = localStorage.getItem('encryptedSeed');
   const storedSeed = encryptedSeed ? '' : localStorage.getItem('seed') || '';
