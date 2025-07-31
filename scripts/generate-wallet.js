@@ -6,12 +6,15 @@ const {
   deriveWalletFromSeed,
   deriveWalletFromMnemonic,
   deriveAddresses,
+  deriveSecretKeyFromSeed,
+  derivePublicKeyFromSeed,
 } = require('../lib/wallet');
 
 let outPath;
 let index = 0;
 let prefix = 'nano_';
 let count = 1;
+let showKeys = false;
 let seed;
 let mnemonic;
 
@@ -26,6 +29,9 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--count':
       count = parseInt(args[++i], 10);
+      break;
+    case '--keys':
+      showKeys = true;
       break;
     case '--seed':
       seed = args[++i];
@@ -59,7 +65,13 @@ async function main() {
     console.log(`Mnemonic: ${wallet.mnemonic}`);
     console.log(`Addresses:`);
     addresses.forEach((addr, i) => {
-      console.log(`  [${index + i}] ${addr}`);
+      const line = [`  [${index + i}] ${addr}`];
+      if (showKeys) {
+        const sk = deriveSecretKeyFromSeed(wallet.seed, index + i);
+        const pk = derivePublicKeyFromSeed(wallet.seed, index + i);
+        line.push(`\n    Secret: ${sk}\n    Public: ${pk}`);
+      }
+      console.log(line.join(''));
     });
   }
 }
