@@ -20,11 +20,23 @@
     <div id="offline-banner" class="offline-banner">You are offline</div>
     <div id="holding" class="uk-section wallet-generator">
       <h2 class="nyano">Generate Nano Wallet</h2>
-      <p>Your new seed and first Nano address are shown below. Store the seed securely.</p>
+      <p>
+        Your new seed and first Nano address are shown below. Store the seed
+        securely.
+      </p>
       <canvas id="address-qr" width="192" height="192"></canvas>
-      <p><strong>Seed:</strong> <span id="seed"></span></p>
-      <p><strong>Address:</strong> <span id="address"></span></p>
-      <button id="generate-btn" class="uk-button uk-button-primary">Generate New Wallet</button>
+      <p>
+        <strong>Seed:</strong> <span id="seed"></span>
+        <button id="copy-seed-btn" class="wallet-btn">Copy Seed</button>
+      </p>
+      <p>
+        <strong>Address:</strong> <span id="address"></span>
+        <button id="copy-address-btn" class="wallet-btn">Copy Address</button>
+      </p>
+      <button id="download-btn" class="wallet-btn">Download Wallet</button>
+      <button id="generate-btn" class="wallet-btn primary">
+        Generate New Wallet
+      </button>
     </div>
     <script src="js/nanocurrency.js"></script>
     <script src="js/qrcode.js"></script>
