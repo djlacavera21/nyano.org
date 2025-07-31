@@ -402,6 +402,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const copyBtn = document.getElementById('copy-address');
   const viewAddrBtn = document.getElementById('view-address');
   const refreshBalanceBtn = document.getElementById('refresh-balance');
+  const saveQrBtn = document.getElementById('save-address-qr');
+  const sendMaxBtn = document.getElementById('send-max');
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       updateAddress();
@@ -419,6 +421,20 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   if (refreshBalanceBtn) {
     refreshBalanceBtn.addEventListener('click', fetchBalance);
+  }
+  if (saveQrBtn && qrCanvas) {
+    saveQrBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = qrCanvas.toDataURL('image/png');
+      link.download = 'nyano-address.png';
+      link.click();
+    });
+  }
+  if (sendMaxBtn && balanceEl) {
+    sendMaxBtn.addEventListener('click', () => {
+      const amtInput = document.getElementById('send-amount');
+      if (amtInput) amtInput.value = balanceEl.textContent || '0';
+    });
   }
 
   const sendBtn = document.getElementById('send-button');
