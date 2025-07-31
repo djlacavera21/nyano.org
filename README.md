@@ -114,3 +114,7 @@ version and rebuild the binary using the helper script:
 
 The script fetches the newest changes from the `nano-node` repository and
 recompiles the daemon in `nano-node/build`.
+
+## Continuous Integration
+A GitHub Actions workflow automatically runs ESLint on every push and pull
+request. This helps catch coding issues before changes are merged.
