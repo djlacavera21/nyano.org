@@ -261,6 +261,59 @@ window.addEventListener('DOMContentLoaded', () => {
     exportHistoryBtn.addEventListener('click', exportHistory);
   }
 
+  // Network account history
+  const networkHistoryTable = document.getElementById('network-history-table');
+  const refreshNetworkHistoryBtn = document.getElementById('refresh-network-history');
+
+  const renderNetworkHistory = entries => {
+    if (!networkHistoryTable) return;
+    const tbody = networkHistoryTable.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if (!Array.isArray(entries) || !entries.length) {
+      const row = document.createElement('tr');
+      row.innerHTML = '<td colspan="3">No history</td>';
+      tbody.appendChild(row);
+      return;
+    }
+    entries.forEach(e => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${e.type}</td><td>${e.amount}</td><td>${e.hash}</td>`;
+      tbody.appendChild(row);
+    });
+  };
+
+  const fetchNetworkHistory = async () => {
+    if (!address) return;
+    if (networkHistoryTable) {
+      const tbody = networkHistoryTable.querySelector('tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+    }
+    try {
+      const resp = await fetch(getRpcUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'account_history', account: address, count: 20, raw: true })
+      });
+      const data = await resp.json();
+      const entries = (data.history || []).map(h => ({
+        type: h.type,
+        amount: Number(h.amount) / 1e30,
+        hash: h.hash
+      }));
+      renderNetworkHistory(entries);
+    } catch (err) {
+      renderNetworkHistory([]);
+    }
+  };
+
+  if (refreshNetworkHistoryBtn) {
+    refreshNetworkHistoryBtn.addEventListener('click', fetchNetworkHistory);
+  }
+
+  // initial fetch
+  fetchNetworkHistory();
+
   // Contacts
   const contactsTable = document.getElementById('contacts-table');
   const addContactBtn = document.getElementById('add-contact');
