@@ -53,6 +53,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const toggleSeedBtn = document.getElementById('toggle-seed');
   const generateSeedBtn = document.getElementById('generate-seed');
   const saveSeedBtn = document.getElementById('save-seed');
+  const exportSeedBtn = document.getElementById('export-seed');
+  const importSeedBtn = document.getElementById('import-seed');
+  const seedFileInput = document.getElementById('seed-file');
   const networkSelect = document.getElementById('network-select');
   const rpcInput = document.getElementById('rpc-url');
   const saveRpcBtn = document.getElementById('save-rpc');
@@ -101,6 +104,43 @@ window.addEventListener('DOMContentLoaded', () => {
     saveSeedBtn.addEventListener('click', () => {
       localStorage.setItem('seed', seedInput.value.trim());
       updateAddress();
+    });
+  }
+
+  const exportSeed = () => {
+    if (!seedInput) return;
+    const seed = seedInput.value.trim();
+    if (!seed) return;
+    const blob = new Blob([seed], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nyano-seed.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importSeed = files => {
+    const file = files[0];
+    if (!file || !seedInput) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      seedInput.value = (reader.result || '').trim();
+      localStorage.setItem('seed', seedInput.value);
+      updateAddress();
+    };
+    reader.readAsText(file);
+  };
+
+  if (exportSeedBtn) {
+    exportSeedBtn.addEventListener('click', exportSeed);
+  }
+
+  if (importSeedBtn && seedFileInput) {
+    importSeedBtn.addEventListener('click', () => seedFileInput.click());
+    seedFileInput.addEventListener('change', e => {
+      importSeed(e.target.files);
+      seedFileInput.value = '';
     });
   }
 
