@@ -1,7 +1,25 @@
 const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 const { name, version } = require('./package.json');
+
+let nodeProcess;
+
+function startNanoNode() {
+  const nodePath = path.join(__dirname, '..', 'nano-node', 'build', 'nano_node');
+  if (fs.existsSync(nodePath)) {
+    nodeProcess = spawn(nodePath, ['--daemon'], { stdio: 'ignore' });
+  } else {
+    console.error('nano_node binary not found. Run scripts/setup-nano-node.sh first.');
+  }
+}
+
+function stopNanoNode() {
+  if (nodeProcess && !nodeProcess.killed) {
+    nodeProcess.kill();
+  }
+}
 
 function getStatePath() {
   return path.join(app.getPath('userData'), 'window-state.json');
@@ -75,6 +93,7 @@ function createMenu() {
 }
 
 app.whenReady().then(() => {
+  startNanoNode();
   createWindow();
   createMenu();
 
@@ -86,3 +105,5 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
+
+app.on('before-quit', stopNanoNode);
