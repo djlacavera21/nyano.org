@@ -87,6 +87,13 @@
       defer
       src="node_modules/@fortawesome/fontawesome-free/js/all.min.js"
     ></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
     <!-- Cloudflare Web Analytics -->
     <script
       defer

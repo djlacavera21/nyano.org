@@ -33,6 +33,12 @@ If you are interested in including a link on nyano.org, please list it here firs
 
 ## installation
 npm install
+
+## Offline access
+The site registers a small service worker (`sw.js`) to cache static assets so
+that pages remain available when offline. Load the homepage once and it will
+work without a network connection. The service worker can be removed via your
+browser settings if needed.
 ## Desktop wallet
 See [linux-desktop](linux-desktop/) for an Electron-based desktop wallet and miner.
 The app now includes seed management, network selection on the settings page and a contacts view
