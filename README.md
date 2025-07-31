@@ -121,3 +121,17 @@ recompiles the daemon in `nano-node/build`.
 ## Continuous Integration
 A GitHub Actions workflow automatically runs ESLint on every push and pull
 request. This helps catch coding issues before changes are merged.
+
+## Generating a wallet
+You can generate a new Nano wallet from the command line using:
+
+```bash
+npm run generate-wallet
+```
+
+The command prints the seed and address to the console. Provide a file path to save the wallet as JSON:
+
+```bash
+npm run generate-wallet -- wallet.json
+```
+
