@@ -197,3 +197,11 @@ nav.uk-navbar-container a:hover {
 .offline-banner.show {
   display: block;
 }
+
+.wallet-generator {
+  text-align: center;
+}
+
+.wallet-generator button {
+  margin-top: 16px;
+}

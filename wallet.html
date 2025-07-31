@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Nyano Wallet Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <nav class="uk-navbar-container" uk-navbar>
+      <div class="uk-navbar-left">
+        <a href="index.html" class="uk-navbar-item uk-logo">nyano</a>
+      </div>
+      <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+          <li><a href="https://github.com/rickyhewitt/nyano.org">GitHub</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div id="offline-banner" class="offline-banner">You are offline</div>
+    <div id="holding" class="uk-section wallet-generator">
+      <h2 class="nyano">Generate Nano Wallet</h2>
+      <p>Your new seed and first Nano address are shown below. Store the seed securely.</p>
+      <canvas id="address-qr" width="192" height="192"></canvas>
+      <p><strong>Seed:</strong> <span id="seed"></span></p>
+      <p><strong>Address:</strong> <span id="address"></span></p>
+      <button id="generate-btn" class="uk-button uk-button-primary">Generate New Wallet</button>
+    </div>
+    <script src="js/nanocurrency.js"></script>
+    <script src="js/qrcode.js"></script>
+    <script src="js/offline.js"></script>
+    <script src="js/wallet.js"></script>
+  </body>
+</html>
