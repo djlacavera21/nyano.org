@@ -1,5 +1,5 @@
 /* global QRCode */
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   const sidebarItems = document.querySelectorAll('#sidebar li');
   const pages = document.querySelectorAll('.page');
   const sidebar = document.getElementById('sidebar');
@@ -106,6 +106,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const startNodeBtn = document.getElementById('start-node');
   const stopNodeBtn = document.getElementById('stop-node');
   const nodeStatusEl = document.getElementById('node-status');
+  const autoStartNodeToggle = document.getElementById('auto-start-node');
 
   const updateNodeControls = async () => {
     const running = await window.nyano.nodeStatus();
@@ -127,6 +128,24 @@ window.addEventListener('DOMContentLoaded', () => {
       await window.nyano.stopNode();
       updateNodeControls();
     });
+  }
+
+  if (autoStartNodeToggle) {
+    const autoStart = localStorage.getItem('autoStartNode') === 'true';
+    autoStartNodeToggle.checked = autoStart;
+    autoStartNodeToggle.addEventListener('change', async () => {
+      const enabled = autoStartNodeToggle.checked;
+      localStorage.setItem('autoStartNode', enabled.toString());
+      if (enabled) {
+        await window.nyano.startNode();
+      } else {
+        await window.nyano.stopNode();
+      }
+      updateNodeControls();
+    });
+    if (autoStart) {
+      await window.nyano.startNode();
+    }
   }
 
   updateNodeControls();
@@ -281,6 +300,7 @@ window.addEventListener('DOMContentLoaded', () => {
       network: localStorage.getItem('network') || 'mainnet',
       rpcUrl: localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org',
       accountIndex: parseInt(localStorage.getItem('accountIndex') || '0', 10),
+      autoStartNode: localStorage.getItem('autoStartNode') === 'true',
       contacts: JSON.parse(localStorage.getItem('contacts') || '[]'),
       history: JSON.parse(localStorage.getItem('history') || '[]'),
     };
@@ -326,6 +346,12 @@ window.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('accountIndex', accountIndex.toString());
           if (indexInput) indexInput.value = accountIndex;
         }
+        if (typeof data.autoStartNode === 'boolean') {
+          localStorage.setItem('autoStartNode', data.autoStartNode.toString());
+          if (autoStartNodeToggle) {
+            autoStartNodeToggle.checked = data.autoStartNode;
+          }
+        }
         if (Array.isArray(data.contacts)) {
           contacts = data.contacts;
           saveContacts();
@@ -348,6 +374,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (seedInput) seedInput.disabled = false;
     if (networkSelect) networkSelect.value = 'mainnet';
     if (rpcInput) rpcInput.value = 'https://rpc.nyano.org';
+    if (autoStartNodeToggle) autoStartNodeToggle.checked = false;
     accountIndex = 0;
     if (indexInput) indexInput.value = '0';
     contacts = [];
@@ -357,6 +384,8 @@ window.addEventListener('DOMContentLoaded', () => {
     renderContacts();
     renderHistory();
     updateAddress();
+    window.nyano.stopNode();
+    updateNodeControls();
   };
 
   if (networkSelect) {
