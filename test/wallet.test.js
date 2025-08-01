@@ -28,6 +28,9 @@ async function run() {
   assert(wallet.validateSecretKey(sk));
   assert.strictEqual(typeof pk, 'string');
 
+  const fromSecret = wallet.deriveWalletFromSecretKey(sk);
+  assert.strictEqual(fromSecret.address, w.address);
+
   const addresses = wallet.deriveAddresses(w.seed, 2, 0, 'nano_');
   assert.strictEqual(addresses.length, 2);
 
@@ -43,6 +46,12 @@ async function run() {
   const loaded = wallet.loadWalletFromFile(file, 'secret');
   assert.strictEqual(loaded.address, w.address);
   fs.unlinkSync(file);
+
+  const file2 = path.join(tmp, 'secret-wallet.json');
+  wallet.saveWalletToFile(fromSecret, file2, 'secret');
+  const loaded2 = wallet.loadWalletFromFile(file2, 'secret');
+  assert.strictEqual(loaded2.address, w.address);
+  fs.unlinkSync(file2);
 
   console.log('All wallet tests passed');
 }

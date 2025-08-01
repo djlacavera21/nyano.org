@@ -147,7 +147,7 @@ You can generate a new Nano wallet from the command line using:
 npm run generate-wallet
 ```
 
-The command prints the seed, mnemonic and address to the console. Provide a file path to save the wallet as JSON:
+The command prints the seed, mnemonic and address (or secret/public key and address when using `--secret`) to the console. Provide a file path to save the wallet as JSON:
 
 ```bash
 npm run generate-wallet -- wallet.json
@@ -162,6 +162,7 @@ npm run generate-wallet -- --mnemonic "word list..."
 npm run generate-wallet -- --mnemonic "word list..." --passphrase myphrase
 npm run generate-wallet -- --keys
 npm run generate-wallet -- --password mypass -- wallet.json
+npm run generate-wallet -- --secret <secret_key>
 ```
 
 When providing a `--password`, the wallet seed is encrypted before being saved
@@ -178,12 +179,12 @@ It exposes several endpoints:
 - `GET /generate` – returns a new wallet. Optional query parameters `index`,
   `prefix` and `count` allow specifying the account index, address prefix and
   number of addresses to generate.
-- `POST /derive` – derive from a provided seed or mnemonic. Send `index`,
+- `POST /derive` – derive from a provided seed, mnemonic or secret key. Send `index`,
   `prefix`, `passphrase` and `count` in the JSON body to control the derived addresses.
-- `POST /keys` – return the secret and public keys for a seed or mnemonic at a
-  given index. Include `passphrase` if the mnemonic uses one.
-- `POST /encrypt` – encrypt a seed with a password. Send `seed` and `password`
-  in the JSON body.
-- `POST /decrypt` – decrypt an encrypted seed using a password. Send
+- `POST /keys` – return the secret and public keys for a seed, mnemonic or secret key.
+  Include `passphrase` if the mnemonic uses one.
+- `POST /encrypt` – encrypt a seed or secret key with a password. Send `seed` or
+  `secretKey` plus `password` in the JSON body.
+- `POST /decrypt` – decrypt an encrypted seed or secret key using a password. Send
   `encryptedSeed` and `password` in the JSON body.
 - `POST /validate` – validate a seed, mnemonic, address or secret key.

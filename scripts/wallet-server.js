@@ -9,6 +9,7 @@ const {
   derivePublicKeyFromSeed,
   deriveSecretKeyFromMnemonic,
   derivePublicKeyFromMnemonic,
+  deriveWalletFromSecretKey,
   validateSeed,
   validateMnemonic,
   validateAddress,
@@ -36,7 +37,7 @@ app.get('/generate', async (req, res) => {
 });
 
 app.post('/derive', (req, res) => {
-  const { seed, mnemonic, passphrase = '' } = req.body;
+  const { seed, mnemonic, secretKey, passphrase = '' } = req.body;
   const index = req.body.index ? parseInt(req.body.index, 10) : 0;
   const prefix = req.body.prefix || 'nano_';
   const count = req.body.count ? parseInt(req.body.count, 10) : 1;
@@ -46,10 +47,16 @@ app.post('/derive', (req, res) => {
       wallet = deriveWalletFromSeed(seed, index, prefix);
     } else if (mnemonic) {
       wallet = deriveWalletFromMnemonic(mnemonic, index, prefix, passphrase);
+    } else if (secretKey) {
+      wallet = deriveWalletFromSecretKey(secretKey, prefix);
     } else {
-      return res.status(400).json({ error: 'seed or mnemonic required' });
+      return res
+        .status(400)
+        .json({ error: 'seed, mnemonic or secretKey required' });
     }
-    const addresses = deriveAddresses(wallet.seed, count, index, prefix);
+    const addresses = wallet.seed
+      ? deriveAddresses(wallet.seed, count, index, prefix)
+      : [wallet.address];
     res.json({ ...wallet, addresses });
   } catch (err) {
     res.status(400).json({ error: 'invalid data' });
@@ -57,33 +64,39 @@ app.post('/derive', (req, res) => {
 });
 
 app.post('/keys', (req, res) => {
-  const { seed, mnemonic, passphrase = '' } = req.body;
+  const { seed, mnemonic, secretKey, passphrase = '' } = req.body;
   const index = req.body.index ? parseInt(req.body.index, 10) : 0;
   try {
-    let secretKey;
+    let sk;
     let publicKey;
     if (seed) {
-      secretKey = deriveSecretKeyFromSeed(seed, index);
+      sk = deriveSecretKeyFromSeed(seed, index);
       publicKey = derivePublicKeyFromSeed(seed, index);
     } else if (mnemonic) {
-      secretKey = deriveSecretKeyFromMnemonic(mnemonic, index, passphrase);
+      sk = deriveSecretKeyFromMnemonic(mnemonic, index, passphrase);
       publicKey = derivePublicKeyFromMnemonic(mnemonic, index, passphrase);
+    } else if (secretKey) {
+      sk = secretKey;
+      publicKey = derivePublicKeyFromSeed(secretKey, 0);
     } else {
-      return res.status(400).json({ error: 'seed or mnemonic required' });
+      return res
+        .status(400)
+        .json({ error: 'seed, mnemonic or secretKey required' });
     }
-    res.json({ secretKey, publicKey });
+    res.json({ secretKey: sk, publicKey });
   } catch {
     res.status(400).json({ error: 'invalid data' });
   }
 });
 
 app.post('/encrypt', (req, res) => {
-  const { seed, password } = req.body;
-  if (!seed || !password) {
-    return res.status(400).json({ error: 'seed and password required' });
+  const { seed, secretKey, password } = req.body;
+  const value = seed || secretKey;
+  if (!value || !password) {
+    return res.status(400).json({ error: 'value and password required' });
   }
   try {
-    const encryptedSeed = encryptSeed(seed, password);
+    const encryptedSeed = encryptSeed(value, password);
     res.json({ encryptedSeed });
   } catch {
     res.status(500).json({ error: 'encryption failed' });
