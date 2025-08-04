@@ -99,6 +99,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const indexInput = document.getElementById('account-index');
   const saveIndexBtn = document.getElementById('save-account-index');
   const currentIndexEl = document.getElementById('current-index');
+  const walletStatusEl = document.getElementById('wallet-status');
   const exportSettingsBtn = document.getElementById('export-settings');
   const importSettingsBtn = document.getElementById('import-settings');
   const resetSettingsBtn = document.getElementById('reset-settings');
@@ -415,6 +416,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   const getRpcUrl = () => (rpcInput ? rpcInput.value.trim() : storedRpc);
 
+  const showWalletStatus = (message, duration = 3000) => {
+    if (!walletStatusEl) return;
+    walletStatusEl.textContent = message;
+    if (duration) {
+      setTimeout(() => {
+        if (walletStatusEl.textContent === message) walletStatusEl.textContent = '';
+      }, duration);
+    }
+  };
+
   async function fetchBalance() {
     if (!balanceEl) return;
     balanceEl.textContent = '...';
@@ -441,7 +452,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   async function receivePending() {
     if (!seedInput || !seedInput.value.trim()) {
-      alert('No seed configured');
+      showWalletStatus('No seed configured');
       return;
     }
     updateAddress();
@@ -462,7 +473,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       const pendingData = await pendingResp.json();
       const hashes = Object.keys(pendingData.blocks || {});
       if (!hashes.length) {
-        alert('No pending blocks');
+        showWalletStatus('No pending blocks');
         return;
       }
       const infoResp = await fetch(rpcUrl, {
@@ -518,8 +529,9 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
       fetchBalance();
       fetchNetworkHistory();
+      showWalletStatus('Received pending blocks');
     } catch (err) {
-      alert('Error receiving');
+      showWalletStatus('Error receiving pending');
     }
   }
 
@@ -559,20 +571,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       updateAddress();
-      navigator.clipboard.writeText(address).then(() => {
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = ''), 1000);
-      });
+      navigator.clipboard
+        .writeText(address)
+        .then(() => showWalletStatus('Address copied'))
+        .catch(() => showWalletStatus('Copy failed'));
     });
   }
   if (copyNanoBtn) {
     copyNanoBtn.addEventListener('click', () => {
       updateAddress();
       const nanoAddr = nanoAddressEl ? nanoAddressEl.value : '';
-      navigator.clipboard.writeText(nanoAddr).then(() => {
-        copyNanoBtn.textContent = 'Copied!';
-        setTimeout(() => (copyNanoBtn.textContent = ''), 1000);
-      });
+      navigator.clipboard
+        .writeText(nanoAddr)
+        .then(() => showWalletStatus('NANO address copied'))
+        .catch(() => showWalletStatus('Copy failed'));
     });
   }
   if (viewAddrBtn) {
