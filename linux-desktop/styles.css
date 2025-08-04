@@ -112,6 +112,7 @@ header h1 {
 
 .wallet-address,
 .send-form,
+.representative,
 .miner-controls {
   margin-bottom: 20px;
 }
@@ -161,6 +162,21 @@ header h1 {
 .miner-controls button {
   margin-top: 10px;
   padding: 8px 12px;
+}
+
+.representative input {
+  padding: 6px;
+  margin-right: 4px;
+  width: 300px;
+}
+
+.representative button {
+  padding: 6px 10px;
+}
+
+.representative .current-rep button {
+  padding: 2px 6px;
+  margin-left: 4px;
 }
 
 .miner-console {
