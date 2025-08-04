@@ -52,4 +52,8 @@ contextBridge.exposeInMainWorld('nyano', {
   startNode: () => ipcRenderer.invoke('start-node'),
   stopNode: () => ipcRenderer.invoke('stop-node'),
   nodeStatus: () => ipcRenderer.invoke('node-status'),
+  startMiner: () => ipcRenderer.invoke('start-miner'),
+  stopMiner: () => ipcRenderer.invoke('stop-miner'),
+  onMinerOutput: (cb) => ipcRenderer.on('miner-output', (_, data) => cb(data)),
+  onMinerExit: (cb) => ipcRenderer.on('miner-exit', (_, code) => cb(code)),
 });
