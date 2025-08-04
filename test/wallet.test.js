@@ -27,6 +27,8 @@ async function run() {
   const pk = wallet.derivePublicKeyFromMnemonic(w.mnemonic);
   assert(wallet.validateSecretKey(sk));
   assert.strictEqual(typeof pk, 'string');
+  const pkFromSecret = wallet.derivePublicKeyFromSecretKey(sk);
+  assert.strictEqual(pkFromSecret, pk);
 
   const fromSecret = wallet.deriveWalletFromSecretKey(sk);
   assert.strictEqual(fromSecret.address, w.address);
