@@ -10,6 +10,7 @@ const {
   deriveSecretKeyFromMnemonic,
   derivePublicKeyFromMnemonic,
   deriveWalletFromSecretKey,
+  derivePublicKeyFromSecretKey,
   validateSeed,
   validateMnemonic,
   validateAddress,
@@ -77,7 +78,7 @@ app.post('/keys', (req, res) => {
       publicKey = derivePublicKeyFromMnemonic(mnemonic, index, passphrase);
     } else if (secretKey) {
       sk = secretKey;
-      publicKey = derivePublicKeyFromSeed(secretKey, 0);
+      publicKey = derivePublicKeyFromSecretKey(secretKey);
     } else {
       return res
         .status(400)
