@@ -96,6 +96,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const unlockWalletBtn = document.getElementById('unlock-wallet');
   const networkSelect = document.getElementById('network-select');
   const currentNetworkEl = document.getElementById('current-network');
+  const headerNetworkEl = document.getElementById('header-network');
   const rpcInput = document.getElementById('rpc-url');
   const saveRpcBtn = document.getElementById('save-rpc');
   const indexInput = document.getElementById('account-index');
@@ -171,6 +172,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   const storedNetwork = localStorage.getItem('network') || 'mainnet';
   if (networkSelect) networkSelect.value = storedNetwork;
   if (currentNetworkEl) currentNetworkEl.textContent = storedNetwork;
+  if (headerNetworkEl) {
+    headerNetworkEl.textContent = storedNetwork;
+    headerNetworkEl.className = `network-indicator ${storedNetwork}`;
+  }
   if (rpcInput) rpcInput.value = getStoredRpc(storedNetwork);
   const storedIndex = parseInt(localStorage.getItem('accountIndex') || '0', 10);
   if (indexInput) indexInput.value = storedIndex;
@@ -353,6 +358,10 @@ window.addEventListener('DOMContentLoaded', async () => {
           localStorage.setItem('network', data.network);
           if (networkSelect) networkSelect.value = data.network;
           if (currentNetworkEl) currentNetworkEl.textContent = data.network;
+          if (headerNetworkEl) {
+            headerNetworkEl.textContent = data.network;
+            headerNetworkEl.className = `network-indicator ${data.network}`;
+          }
         }
         if (data.rpcUrls && typeof data.rpcUrls === 'object') {
           Object.keys(NETWORK_RPC_DEFAULTS).forEach((net) => {
@@ -402,6 +411,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (seedInput) seedInput.disabled = false;
     if (networkSelect) networkSelect.value = 'mainnet';
     if (currentNetworkEl) currentNetworkEl.textContent = 'mainnet';
+    if (headerNetworkEl) {
+      headerNetworkEl.textContent = 'mainnet';
+      headerNetworkEl.className = 'network-indicator mainnet';
+    }
     if (rpcInput) rpcInput.value = NETWORK_RPC_DEFAULTS.mainnet;
     if (autoStartNodeToggle) autoStartNodeToggle.checked = false;
     accountIndex = 0;
@@ -422,6 +435,10 @@ window.addEventListener('DOMContentLoaded', async () => {
       const net = networkSelect.value;
       localStorage.setItem('network', net);
       if (currentNetworkEl) currentNetworkEl.textContent = net;
+      if (headerNetworkEl) {
+        headerNetworkEl.textContent = net;
+        headerNetworkEl.className = `network-indicator ${net}`;
+      }
       if (rpcInput) rpcInput.value = getStoredRpc(net);
     });
   }
