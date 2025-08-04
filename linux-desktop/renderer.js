@@ -111,6 +111,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   const nodeStatusEl = document.getElementById('node-status');
   const autoStartNodeToggle = document.getElementById('auto-start-node');
 
+  const NETWORK_RPC_DEFAULTS = {
+    mainnet: 'https://rpc.nyano.org',
+    testnet: 'https://rpc-test.nyano.org',
+    beta: 'https://rpc-beta.nyano.org',
+  };
+
+  const getStoredRpc = (net) =>
+    localStorage.getItem(`rpcUrl_${net}`) || NETWORK_RPC_DEFAULTS[net];
+
   const updateNodeControls = async () => {
     const running = await window.nyano.nodeStatus();
     if (nodeStatusEl)
@@ -162,8 +171,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const storedNetwork = localStorage.getItem('network') || 'mainnet';
   if (networkSelect) networkSelect.value = storedNetwork;
   if (currentNetworkEl) currentNetworkEl.textContent = storedNetwork;
-  const storedRpc = localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org';
-  if (rpcInput) rpcInput.value = storedRpc;
+  if (rpcInput) rpcInput.value = getStoredRpc(storedNetwork);
   const storedIndex = parseInt(localStorage.getItem('accountIndex') || '0', 10);
   if (indexInput) indexInput.value = storedIndex;
 
@@ -298,11 +306,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   const exportSettings = () => {
+    const rpcUrls = {};
+    Object.keys(NETWORK_RPC_DEFAULTS).forEach((net) => {
+      rpcUrls[net] = getStoredRpc(net);
+    });
     const data = {
       seed: localStorage.getItem('seed') || '',
       encryptedSeed: localStorage.getItem('encryptedSeed') || '',
       network: localStorage.getItem('network') || 'mainnet',
-      rpcUrl: localStorage.getItem('rpcUrl') || 'https://rpc.nyano.org',
+      rpcUrls,
       accountIndex: parseInt(localStorage.getItem('accountIndex') || '0', 10),
       autoStartNode: localStorage.getItem('autoStartNode') === 'true',
       contacts: JSON.parse(localStorage.getItem('contacts') || '[]'),
@@ -340,9 +352,21 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (data.network) {
           localStorage.setItem('network', data.network);
           if (networkSelect) networkSelect.value = data.network;
+          if (currentNetworkEl) currentNetworkEl.textContent = data.network;
         }
-        if (data.rpcUrl) {
-          localStorage.setItem('rpcUrl', data.rpcUrl);
+        if (data.rpcUrls && typeof data.rpcUrls === 'object') {
+          Object.keys(NETWORK_RPC_DEFAULTS).forEach((net) => {
+            if (data.rpcUrls[net]) {
+              localStorage.setItem(`rpcUrl_${net}`, data.rpcUrls[net]);
+            }
+          });
+          if (rpcInput) {
+            const net = data.network || storedNetwork;
+            rpcInput.value = getStoredRpc(net);
+          }
+        } else if (data.rpcUrl) {
+          const net = data.network || 'mainnet';
+          localStorage.setItem(`rpcUrl_${net}`, data.rpcUrl);
           if (rpcInput) rpcInput.value = data.rpcUrl;
         }
         if (typeof data.accountIndex === 'number') {
@@ -377,7 +401,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (seedInput) seedInput.value = '';
     if (seedInput) seedInput.disabled = false;
     if (networkSelect) networkSelect.value = 'mainnet';
-    if (rpcInput) rpcInput.value = 'https://rpc.nyano.org';
+    if (currentNetworkEl) currentNetworkEl.textContent = 'mainnet';
+    if (rpcInput) rpcInput.value = NETWORK_RPC_DEFAULTS.mainnet;
     if (autoStartNodeToggle) autoStartNodeToggle.checked = false;
     accountIndex = 0;
     if (indexInput) indexInput.value = '0';
@@ -394,14 +419,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (networkSelect) {
     networkSelect.addEventListener('change', () => {
-      localStorage.setItem('network', networkSelect.value);
-      if (currentNetworkEl) currentNetworkEl.textContent = networkSelect.value;
+      const net = networkSelect.value;
+      localStorage.setItem('network', net);
+      if (currentNetworkEl) currentNetworkEl.textContent = net;
+      if (rpcInput) rpcInput.value = getStoredRpc(net);
     });
   }
 
   if (saveRpcBtn && rpcInput) {
     saveRpcBtn.addEventListener('click', () => {
-      localStorage.setItem('rpcUrl', rpcInput.value.trim());
+      const net = networkSelect ? networkSelect.value : storedNetwork;
+      localStorage.setItem(`rpcUrl_${net}`, rpcInput.value.trim());
     });
   }
 
@@ -417,7 +445,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     currentIndexEl.textContent = accountIndex;
   }
 
-  const getRpcUrl = () => (rpcInput ? rpcInput.value.trim() : storedRpc);
+  const getRpcUrl = () => {
+    const net = networkSelect ? networkSelect.value : storedNetwork;
+    return rpcInput
+      ? rpcInput.value.trim() || getStoredRpc(net)
+      : getStoredRpc(net);
+  };
 
   const showWalletStatus = (message, duration = 3000) => {
     if (!walletStatusEl) return;
