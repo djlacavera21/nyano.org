@@ -24,6 +24,7 @@ let mnemonic;
 let secretKey;
 let password;
 let passphrase;
+let jsonOutput = false;
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -39,6 +40,9 @@ for (let i = 0; i < args.length; i++) {
       break;
     case '--keys':
       showKeys = true;
+      break;
+    case '--json':
+      jsonOutput = true;
       break;
     case '--load':
       loadPath = args[++i];
@@ -81,11 +85,18 @@ async function main() {
   const addresses = wallet.seed
     ? deriveAddresses(wallet.seed, count, index, prefix)
     : [wallet.address];
+  const output = { ...wallet, addresses };
 
   if (outPath) {
     const file = path.resolve(outPath);
-    saveWalletToFile({ ...wallet, addresses }, file, password);
-    console.log(`Wallet written to ${file}`);
+    saveWalletToFile(output, file, password);
+    if (jsonOutput) {
+      console.log(JSON.stringify(output, null, 2));
+    } else {
+      console.log(`Wallet written to ${file}`);
+    }
+  } else if (jsonOutput) {
+    console.log(JSON.stringify(output, null, 2));
   } else {
     if (wallet.seed) {
       if (password) {
