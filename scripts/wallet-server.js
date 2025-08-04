@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
 const {
   generateWallet,
   deriveWalletFromSeed,
@@ -22,6 +24,8 @@ const {
 } = require('../lib/wallet');
 
 const app = express();
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
 
 app.get('/generate', async (req, res) => {
@@ -32,7 +36,8 @@ app.get('/generate', async (req, res) => {
     const wallet = await generateWallet(index, prefix);
     const addresses = deriveAddresses(wallet.seed, count, index, prefix);
     res.json({ ...wallet, addresses });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'failed to generate wallet' });
   }
 });
@@ -60,6 +65,7 @@ app.post('/derive', (req, res) => {
       : [wallet.address];
     res.json({ ...wallet, addresses });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: 'invalid data' });
   }
 });
@@ -85,7 +91,8 @@ app.post('/keys', (req, res) => {
         .json({ error: 'seed, mnemonic or secretKey required' });
     }
     res.json({ secretKey: sk, publicKey });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(400).json({ error: 'invalid data' });
   }
 });
@@ -99,7 +106,8 @@ app.post('/encrypt', (req, res) => {
   try {
     const encryptedSeed = encryptSeed(value, password);
     res.json({ encryptedSeed });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'encryption failed' });
   }
 });
@@ -114,7 +122,8 @@ app.post('/decrypt', (req, res) => {
   try {
     const seed = decryptSeed(encryptedSeed, password);
     res.json({ seed });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(400).json({ error: 'decryption failed' });
   }
 });
@@ -127,7 +136,8 @@ app.post('/save', (req, res) => {
   try {
     saveWalletToFile(wallet, path, password);
     res.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'failed to save wallet' });
   }
 });
@@ -140,7 +150,8 @@ app.post('/load', (req, res) => {
   try {
     const wallet = loadWalletFromFile(path, password);
     res.json(wallet);
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'failed to load wallet' });
   }
 });
@@ -153,6 +164,15 @@ app.post('/validate', (req, res) => {
     address: address ? validateAddress(address) : false,
     secretKey: secretKey ? validateSecretKey(secretKey) : false,
   });
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'not found' });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'internal server error' });
 });
 
 const port = process.env.PORT || 3000;
