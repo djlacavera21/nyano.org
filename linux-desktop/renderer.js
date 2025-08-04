@@ -791,8 +791,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       const amount = parseFloat(amt);
-      if (!to || Number.isNaN(amount) || amount <= 0) {
-        status.textContent = 'Invalid amount or address';
+      if (!window.nyano.validateAddress(to)) {
+        status.textContent = 'Invalid address';
+        return;
+      }
+      if (Number.isNaN(amount) || amount <= 0) {
+        status.textContent = 'Invalid amount';
         return;
       }
 
@@ -1027,7 +1031,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         if (name === null) return;
         const addr = prompt('Edit address', c.address);
         if (addr === null) return;
-        contacts[idx] = { name: name.trim(), address: addr.trim() };
+        const trimmedAddr = addr.trim();
+        if (!window.nyano.validateAddress(trimmedAddr)) {
+          alert('Invalid address');
+          return;
+        }
+        contacts[idx] = { name: name.trim(), address: trimmedAddr };
         saveContacts();
         renderContacts();
       });
@@ -1054,7 +1063,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     addContactBtn.addEventListener('click', () => {
       const name = contactNameInput.value.trim();
       const addr = contactAddressInput.value.trim();
-      if (!name || !addr) return;
+      if (!name || !window.nyano.validateAddress(addr)) {
+        alert('Invalid name or address');
+        return;
+      }
       contacts.push({ name, address: addr });
       saveContacts();
       renderContacts();
