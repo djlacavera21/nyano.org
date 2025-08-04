@@ -46,8 +46,12 @@ the **Representative** section. This makes it easy to change voting
 preferences without leaving the app.
 
 The settings page also lets you configure the RPC endpoint used for network
-requests. By default the application targets `https://rpc.nyano.org` but you
-can update the URL to point to any compatible node.
+requests. Each network (mainnet, testnet and beta) now has its own RPC URL that
+is stored separately and pre-populated with a sensible default
+(`https://rpc.nyano.org`, `https://rpc-test.nyano.org` and
+`https://rpc-beta.nyano.org`). Switching the network automatically updates the
+input field to the saved value for that environment, making it easy to use
+different nodes across networks.
 
 You can run a local node directly from the app. The **Local Node** section
 includes Start and Stop buttons along with a new **Auto-start on launch**
