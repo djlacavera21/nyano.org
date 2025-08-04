@@ -37,6 +37,10 @@ The send form has been updated to create and broadcast real transactions via the
 configured RPC node. A valid wallet seed and sufficient balance are required;
 any errors from the node are shown next to the form.
 
+Incoming funds can be claimed with the new **Receive Pending** button on the
+wallet page. It scans for up to 20 pending blocks and automatically creates the
+required receive transactions before updating your balance and history.
+
 The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you
 can update the URL to point to any compatible node.
