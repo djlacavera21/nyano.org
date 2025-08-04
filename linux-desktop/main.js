@@ -31,6 +31,8 @@ function saveWindowState(win) {
 }
 
 let nodeProcess;
+let minerProcess;
+let mainWindow;
 function startLocalNode() {
   const nodePath = path.join(
     __dirname,
@@ -58,6 +60,40 @@ function isNodeRunning() {
   return !!nodeProcess && !nodeProcess.killed;
 }
 
+function startMiner() {
+  if (minerProcess) return;
+  const cwd = path.join(__dirname, '..');
+  const cmd = process.platform === 'win32' ? 'start.bat' : 'xmrig';
+  const minerPath = path.join(cwd, cmd);
+  const configPath = path.join(cwd, 'config.json');
+  const args = process.platform === 'win32' ? [] : ['-c', configPath];
+  minerProcess = spawn(minerPath, args, {
+    cwd,
+    shell: process.platform === 'win32',
+  });
+  minerProcess.stdout.on('data', (data) => {
+    mainWindow?.webContents.send('miner-output', data.toString());
+  });
+  minerProcess.stderr.on('data', (data) => {
+    mainWindow?.webContents.send('miner-output', data.toString());
+  });
+  minerProcess.on('exit', (code) => {
+    mainWindow?.webContents.send('miner-exit', code ?? 0);
+    minerProcess = null;
+  });
+}
+
+function stopMiner() {
+  if (minerProcess) {
+    minerProcess.kill();
+    minerProcess = null;
+  }
+}
+
+function isMinerRunning() {
+  return !!minerProcess && !minerProcess.killed;
+}
+
 function createWindow() {
   const state = loadWindowState();
   const win = new BrowserWindow({
@@ -69,6 +105,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  mainWindow = win;
 
   if (state.isMaximized) win.maximize();
 
@@ -115,6 +153,16 @@ ipcMain.handle('stop-node', () => {
 
 ipcMain.handle('node-status', () => isNodeRunning());
 
+ipcMain.handle('start-miner', () => {
+  if (!isMinerRunning()) startMiner();
+  return isMinerRunning();
+});
+
+ipcMain.handle('stop-miner', () => {
+  stopMiner();
+  return true;
+});
+
 app.whenReady().then(() => {
   createWindow();
   createMenu();
@@ -130,4 +178,5 @@ app.on('window-all-closed', function () {
 
 app.on('quit', () => {
   stopLocalNode();
+  stopMiner();
 });

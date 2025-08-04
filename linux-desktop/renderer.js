@@ -925,14 +925,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   let mining = false;
   let startTime = 0;
   let timerInterval;
-  let abortMining = false;
   const statusEl = document.getElementById('miner-status');
   const timerEl = document.getElementById('miner-timer');
   const startBtn = document.getElementById('start-miner');
   const stopBtn = document.getElementById('stop-miner');
-  const hashInput = document.getElementById('work-hash');
-  const workerInput = document.getElementById('worker-count');
-  const workOutput = document.getElementById('work-output');
+  const consoleEl = document.getElementById('miner-console');
 
   const updateTimer = () => {
     if (!timerEl) return;
@@ -953,35 +950,33 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
-      const hash = hashInput ? hashInput.value.trim() : '';
-      if (!hash) return alert('Enter block hash');
-      const workers = workerInput ? parseInt(workerInput.value, 10) || 1 : 1;
-      mining = true;
-      abortMining = false;
+      mining = await window.nyano.startMiner();
+      if (!mining) return;
       startTime = Date.now();
-      if (workOutput) workOutput.textContent = '';
+      if (consoleEl) consoleEl.textContent = '';
       clearInterval(timerInterval);
       timerInterval = setInterval(updateTimer, 1000);
-      updateMinerUI();
-      try {
-        const work = await window.nyano.computeWork(hash, { workerCount: workers });
-        if (!abortMining && mining && workOutput) workOutput.textContent = work || 'n/a';
-      } catch {
-        if (!abortMining && workOutput) workOutput.textContent = 'error';
-      }
-      mining = false;
-      clearInterval(timerInterval);
       updateMinerUI();
     });
   }
   if (stopBtn) {
     stopBtn.addEventListener('click', () => {
-      abortMining = true;
-      mining = false;
-      clearInterval(timerInterval);
-      updateMinerUI();
+      window.nyano.stopMiner();
     });
   }
+
+  window.nyano.onMinerOutput((data) => {
+    if (consoleEl) {
+      consoleEl.textContent += data;
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+  });
+
+  window.nyano.onMinerExit(() => {
+    mining = false;
+    clearInterval(timerInterval);
+    updateMinerUI();
+  });
 
   updateMinerUI();
 
