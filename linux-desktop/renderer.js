@@ -439,6 +439,90 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  async function receivePending() {
+    if (!seedInput || !seedInput.value.trim()) {
+      alert('No seed configured');
+      return;
+    }
+    updateAddress();
+    const rpcUrl = getRpcUrl();
+    const seed = seedInput.value.trim();
+    const secretKey = window.nyano.deriveSecretKey(seed, accountIndex);
+    const publicKey = window.nyano.derivePublicKey(secretKey);
+    try {
+      const pendingResp = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'pending',
+          account: address,
+          count: 20,
+        }),
+      });
+      const pendingData = await pendingResp.json();
+      const hashes = Object.keys(pendingData.blocks || {});
+      if (!hashes.length) {
+        alert('No pending blocks');
+        return;
+      }
+      const infoResp = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'account_info', account: address }),
+      });
+      const info = await infoResp.json();
+      let previous = info.frontier || null;
+      const representative = info.representative || address;
+      let balanceRaw = BigInt(info.balance || '0');
+      for (const hash of hashes) {
+        const blockInfoResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'block_info', hash }),
+        });
+        const blockInfo = await blockInfoResp.json();
+        const amountRaw = BigInt(blockInfo.amount || '0');
+        const workHash = previous || publicKey;
+        const workResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'work_generate', hash: workHash }),
+        });
+        const workData = await workResp.json();
+        if (!workData.work) continue;
+        balanceRaw += amountRaw;
+        const blockData = {
+          previous,
+          representative,
+          balance: balanceRaw.toString(),
+          link: hash,
+          work: workData.work,
+        };
+        const { block } = window.nyano.createBlock(secretKey, blockData);
+        const procResp = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'process',
+            json_block: 'true',
+            subtype: previous ? 'receive' : 'open',
+            block,
+          }),
+        });
+        const proc = await procResp.json();
+        if (proc.hash) {
+          previous = proc.hash;
+        } else {
+          break;
+        }
+      }
+      fetchBalance();
+      fetchNetworkHistory();
+    } catch (err) {
+      alert('Error receiving');
+    }
+  }
+
   // Wallet data
   let address = storedSeed
     ? window.nyano.deriveAddress(storedSeed, accountIndex)
@@ -469,6 +553,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const copyNanoBtn = document.getElementById('copy-nano-address');
   const viewAddrBtn = document.getElementById('view-address');
   const refreshBalanceBtn = document.getElementById('refresh-balance');
+  const receivePendingBtn = document.getElementById('receive-pending');
   const saveQrBtn = document.getElementById('save-address-qr');
   const sendMaxBtn = document.getElementById('send-max');
   if (copyBtn) {
@@ -498,6 +583,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
   if (refreshBalanceBtn) {
     refreshBalanceBtn.addEventListener('click', fetchBalance);
+  }
+  if (receivePendingBtn) {
+    receivePendingBtn.addEventListener('click', receivePending);
   }
   if (saveQrBtn && qrCanvas) {
     saveQrBtn.addEventListener('click', () => {
