@@ -11,6 +11,7 @@ const {
   validateWork,
   convert,
   Unit,
+  checkAddress,
 } = require('nanocurrency');
 
 contextBridge.exposeInMainWorld('nyano', {
@@ -28,6 +29,7 @@ contextBridge.exposeInMainWorld('nyano', {
   validateWork,
   convert,
   Unit,
+  validateAddress: (address) => checkAddress(address),
   openExternal: (url) => shell.openExternal(url),
   encryptSeed: (seed, password) => {
     const iv = crypto.randomBytes(16);
