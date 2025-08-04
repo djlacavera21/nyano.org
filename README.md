@@ -174,6 +174,10 @@ Run the wallet API server with:
 npm run wallet-api
 ```
 
+The server enables CORS and sets common security headers so it can be safely
+accessed from browser-based clients. Unknown routes now return a `404` response
+and unexpected errors are handled gracefully.
+
 It exposes several endpoints:
 
 - `GET /generate` – returns a new wallet. Optional query parameters `index`,
