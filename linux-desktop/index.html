@@ -85,6 +85,23 @@
           <div id="tx-status" class="status"></div>
         </div>
 
+        <div class="representative">
+          <h3>Representative</h3>
+          <div class="current-rep">
+            <span id="current-representative">unknown</span>
+            <button id="refresh-representative" title="Refresh">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+          </div>
+          <input
+            type="text"
+            id="representative-address"
+            placeholder="nyano_..."
+          />
+          <button id="set-representative">Set Representative</button>
+          <div id="rep-status" class="status"></div>
+        </div>
+
         <div class="history">
           <h3>Transaction History</h3>
           <table id="history-table">

@@ -41,6 +41,10 @@ Incoming funds can be claimed with the new **Receive Pending** button on the
 wallet page. It scans for up to 20 pending blocks and automatically creates the
 required receive transactions before updating your balance and history.
 
+Your current representative is shown on the wallet page and can be updated using
+the **Representative** section. This makes it easy to change voting
+preferences without leaving the app.
+
 The settings page also lets you configure the RPC endpoint used for network
 requests. By default the application targets `https://rpc.nyano.org` but you
 can update the URL to point to any compatible node.

@@ -19,6 +19,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
   if (currentPage === 'wallet') {
     fetchBalance();
+    fetchRepresentative();
     fetchNetworkHistory();
   } else if (currentPage === 'dashboard') {
     fetchDashboard();
@@ -49,6 +50,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       localStorage.setItem('currentPage', currentPage);
       if (currentPage === 'wallet') {
         fetchBalance();
+        fetchRepresentative();
         fetchNetworkHistory();
       } else if (currentPage === 'dashboard') {
         fetchDashboard();
@@ -182,6 +184,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       QRCode.toCanvas(qrCanvas, addr, { margin: 1 }, () => {});
     }
     fetchBalance();
+    fetchRepresentative();
   };
 
   if (toggleSeedBtn && seedInput) {
@@ -421,7 +424,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     walletStatusEl.textContent = message;
     if (duration) {
       setTimeout(() => {
-        if (walletStatusEl.textContent === message) walletStatusEl.textContent = '';
+        if (walletStatusEl.textContent === message)
+          walletStatusEl.textContent = '';
       }, duration);
     }
   };
@@ -447,6 +451,26 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
     } catch (err) {
       balanceEl.textContent = 'error';
+    }
+  }
+
+  async function fetchRepresentative() {
+    if (!currentRepEl) return;
+    if (!address) return;
+    currentRepEl.textContent = '...';
+    try {
+      const resp = await fetch(getRpcUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'account_representative',
+          account: address,
+        }),
+      });
+      const data = await resp.json();
+      currentRepEl.textContent = data.representative || 'unknown';
+    } catch (err) {
+      currentRepEl.textContent = 'error';
     }
   }
 
@@ -535,6 +559,76 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  async function changeRepresentative() {
+    updateAddress();
+    if (!seedInput || !seedInput.value.trim()) {
+      if (repStatusEl) repStatusEl.textContent = 'No seed configured';
+      return;
+    }
+    const newRep = repInput ? repInput.value.trim() : '';
+    if (!newRep) {
+      if (repStatusEl) repStatusEl.textContent = 'Enter representative';
+      return;
+    }
+    if (!confirm(`Change representative to ${newRep}?`)) return;
+    if (repStatusEl) repStatusEl.textContent = 'Updating...';
+
+    const seed = seedInput.value.trim();
+    const secretKey = window.nyano.deriveSecretKey(seed, accountIndex);
+    const publicKey = window.nyano.derivePublicKey(secretKey);
+    try {
+      const rpcUrl = getRpcUrl();
+      const infoResp = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'account_info', account: address }),
+      });
+      const info = await infoResp.json();
+      const previous = info.frontier || null;
+      const balance = info.balance || '0';
+      const workHash = previous || publicKey;
+      const workResp = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'work_generate', hash: workHash }),
+      });
+      const workData = await workResp.json();
+      if (!workData.work) {
+        if (repStatusEl) repStatusEl.textContent = 'Failed to generate work';
+        return;
+      }
+      const blockData = {
+        previous,
+        representative: newRep,
+        balance,
+        link: '0'.repeat(64),
+        work: workData.work,
+      };
+      const { block } = window.nyano.createBlock(secretKey, blockData);
+      const procResp = await fetch(rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'process',
+          json_block: 'true',
+          subtype: 'change',
+          block,
+        }),
+      });
+      const proc = await procResp.json();
+      if (proc.hash) {
+        if (repStatusEl) repStatusEl.textContent = 'Representative updated';
+        if (repInput) repInput.value = '';
+        fetchRepresentative();
+      } else if (repStatusEl) {
+        repStatusEl.textContent = 'Representative update failed';
+      }
+    } catch (err) {
+      if (repStatusEl)
+        repStatusEl.textContent = 'Error updating representative';
+    }
+  }
+
   // Wallet data
   let address = storedSeed
     ? window.nyano.deriveAddress(storedSeed, accountIndex)
@@ -546,6 +640,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   const addressEl = document.getElementById('address');
   const nanoAddressEl = document.getElementById('nano-address');
   const qrCanvas = document.getElementById('address-qr');
+  const currentRepEl = document.getElementById('current-representative');
+  const refreshRepBtn = document.getElementById('refresh-representative');
+  const repInput = document.getElementById('representative-address');
+  const setRepBtn = document.getElementById('set-representative');
+  const repStatusEl = document.getElementById('rep-status');
   if (addressEl) {
     addressEl.value = address;
   }
@@ -612,6 +711,15 @@ window.addEventListener('DOMContentLoaded', async () => {
       const amtInput = document.getElementById('send-amount');
       if (amtInput) amtInput.value = balanceEl.textContent || '0';
     });
+  }
+  if (refreshRepBtn) {
+    refreshRepBtn.addEventListener('click', () => {
+      updateAddress();
+      fetchRepresentative();
+    });
+  }
+  if (setRepBtn) {
+    setRepBtn.addEventListener('click', changeRepresentative);
   }
 
   const sendBtn = document.getElementById('send-button');
@@ -1178,6 +1286,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   setInterval(() => {
     if (currentPage === 'wallet') fetchNetworkHistory();
+  }, 120000);
+
+  setInterval(() => {
+    if (currentPage === 'wallet') fetchRepresentative();
   }, 120000);
 
   setInterval(() => {
