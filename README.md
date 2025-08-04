@@ -163,10 +163,14 @@ npm run generate-wallet -- --mnemonic "word list..." --passphrase myphrase
 npm run generate-wallet -- --keys
 npm run generate-wallet -- --password mypass -- wallet.json
 npm run generate-wallet -- --secret <secret_key>
+npm run generate-wallet -- --json
 ```
 
 When providing a `--password`, the wallet seed is encrypted before being saved
 to disk or printed to the console.
+
+Use the `--json` flag to output the wallet details and derived addresses as
+JSON, which is helpful for programmatic usage or further processing.
 
 Run the wallet API server with:
 

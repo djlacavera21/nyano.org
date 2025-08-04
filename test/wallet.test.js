@@ -55,6 +55,20 @@ async function run() {
   assert.strictEqual(loaded2.address, w.address);
   fs.unlinkSync(file2);
 
+  const { spawnSync } = require('child_process');
+  const cli = spawnSync('node', ['scripts/generate-wallet.js', '--json'], {
+    encoding: 'utf8',
+  });
+  if (cli.status !== 0) throw new Error(cli.stderr);
+  const cliWallet = JSON.parse(cli.stdout);
+  assert(wallet.validateAddress(cliWallet.address));
+  if (cliWallet.seed) {
+    assert(wallet.validateSeed(cliWallet.seed));
+  } else {
+    assert(wallet.validateSecretKey(cliWallet.secretKey));
+  }
+  assert(Array.isArray(cliWallet.addresses));
+
   console.log('All wallet tests passed');
 }
 
