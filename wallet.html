@@ -24,6 +24,17 @@
         Your new seed and first Nano address are shown below. Store the seed
         securely.
       </p>
+      <div class="wallet-input-group">
+        <label for="seed-input">Existing Seed (optional):</label>
+        <input
+          id="seed-input"
+          class="wallet-input"
+          type="text"
+          maxlength="64"
+          placeholder="64-character seed"
+        />
+        <div id="seed-error" class="error-message"></div>
+      </div>
       <canvas id="address-qr" width="192" height="192"></canvas>
       <p>
         <strong>Seed:</strong> <span id="seed"></span>
