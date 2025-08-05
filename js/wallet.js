@@ -1,7 +1,25 @@
 /* global QRCode */
 const { generateSeed, deriveAddress } = window.nanocurrency;
+
+function showError(msg) {
+  document.getElementById('seed-error').textContent = msg;
+}
+
 async function generateWallet() {
-  const seed = await generateSeed();
+  const seedInput = document.getElementById('seed-input').value.trim();
+  let seed;
+  if (seedInput) {
+    if (/^[0-9a-fA-F]{64}$/.test(seedInput)) {
+      seed = seedInput.toUpperCase();
+      showError('');
+    } else {
+      showError('Seed must be 64 hex characters.');
+      return;
+    }
+  } else {
+    seed = await generateSeed();
+    showError('');
+  }
   const address = deriveAddress(seed, 0, { prefix: 'nano_' });
   document.getElementById('seed').textContent = seed;
   document.getElementById('address').textContent = address;

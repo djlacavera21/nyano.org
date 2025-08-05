@@ -224,3 +224,22 @@ nav.uk-navbar-container a:hover {
 .wallet-generator .wallet-btn.primary {
   background: #3379ca;
 }
+
+.wallet-input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  background: #1b1b1e;
+  color: #b5b5c8;
+  border: 1px solid #4a90e2;
+  border-radius: 4px;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  height: 1em;
+  margin-bottom: 8px;
+}
